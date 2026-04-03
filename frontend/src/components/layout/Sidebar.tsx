@@ -25,7 +25,7 @@ export default function Sidebar() {
   const receivedCount = Array.isArray(matchingReqs?.receive) ? matchingReqs.receive.length : 0
 
   return (
-    <div className="w-64 border-r h-screen bg-slate-50 flex flex-col pt-8">
+    <div className="w-64 h-full bg-slate-50 flex flex-col pt-8 shrink-0">
       <div className="px-6 mb-8 flex items-center gap-2">
         <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
           TODO

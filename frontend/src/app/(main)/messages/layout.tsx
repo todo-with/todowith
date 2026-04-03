@@ -13,7 +13,7 @@ export default function MessagesLayout({ children }: { children: React.ReactNode
   const chatRooms = Array.isArray(rooms) ? rooms : []
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col pt-4">
+    <div className="h-[calc(100vh-10rem)] flex flex-col pt-0">
       <div className="mb-6 shrink-0">
         <h1 className="text-2xl font-bold text-slate-900">메시지</h1>
         <p className="text-slate-600">TODO 메이트와 대화해보세요</p>

@@ -40,25 +40,25 @@ services:
     env_file:
       - ./.env.secret
     depends_on:
-      - postgres
+      # - postgres
       - redis
     networks:
       - app-network
 
   # 6. Database (PostgreSQL)
-  postgres:
-    image: pgvector/pgvector:pg15
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=mydb
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-      - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - app-network
+  # postgres:
+  #   image: pgvector/pgvector:pg15
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     - POSTGRES_USER=user
+  #     - POSTGRES_PASSWORD=password
+  #     - POSTGRES_DB=mydb
+  #   volumes:
+  #     - pg_data:/var/lib/postgresql/data
+  #     - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+  #   networks:
+  #     - app-network
 
   # 7. In-Memory DB / Message Broker (Redis)
   redis:

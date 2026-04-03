@@ -17,16 +17,18 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-function MateCard({ mate, myTasks }: { mate: any; myTasks: any[] }) {
+function MateCard({ mate, myTasks, onToggleTodo, onDeleteTodo }: { mate: any; myTasks: any[]; onToggleTodo: any; onDeleteTodo: any }) {
   const { data: opponentTasksData } = useOpponentTasks(mate.matching_id)
   const { data: matchingDetail } = useMatchingDetail(mate.matching_id)
   
   const opponentTasks = opponentTasksData?.items || []
   const filteredMyTasks = myTasks.filter((t: any) => t.matching_id === mate.matching_id)
-  
-  const totalOpponent = opponentTasks.length
   const completedOpponent = opponentTasks.filter((i: any) => i.is_completed).length
-  const opponentProgress = totalOpponent === 0 ? 0 : Math.round((completedOpponent / totalOpponent) * 100)
+  const totalOpponent = opponentTasks.length
+  
+  const totalTasks = filteredMyTasks.length + totalOpponent
+  const totalCompleted = filteredMyTasks.filter((t: any) => t.is_completed).length + completedOpponent
+  const totalProgress = totalTasks === 0 ? 0 : Math.round((totalCompleted / totalTasks) * 100)
   
   const opponentName = matchingDetail?.opponent_name || "매칭상대"
 
@@ -35,8 +37,8 @@ function MateCard({ mate, myTasks }: { mate: any; myTasks: any[] }) {
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <div className="group cursor-pointer p-4 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all text-left">
+      <DialogTrigger className="w-full">
+        <div className="group cursor-pointer p-4 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all text-left w-full">
           <div className="flex items-center gap-4">
             <Avatar className="w-12 h-12 transition-transform group-hover:scale-105">
               <AvatarFallback className="bg-slate-100 font-bold text-slate-500">
@@ -46,9 +48,9 @@ function MateCard({ mate, myTasks }: { mate: any; myTasks: any[] }) {
             <div className="flex-1 space-y-1">
               <div className="flex justify-between items-center">
                 <div className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
-                  {mate.name} <span className="text-slate-400 text-sm font-normal">(상대: {opponentName})</span>
+                  {mate.name}
                 </div>
-                <div className="text-sm font-bold text-blue-600">{opponentProgress}%</div>
+                <div className="text-sm font-bold text-blue-600">{totalProgress}%</div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex flex-col">
@@ -61,7 +63,7 @@ function MateCard({ mate, myTasks }: { mate: any; myTasks: any[] }) {
                   <span className="text-xs font-semibold text-slate-600">{mate.learning_skill}</span>
                 </div>
               </div>
-              <Progress value={opponentProgress} className="h-1.5 bg-slate-100" />
+              <Progress value={totalProgress} className="h-1.5 bg-slate-100" />
             </div>
           </div>
         </div>
@@ -104,21 +106,28 @@ function MateCard({ mate, myTasks }: { mate: any; myTasks: any[] }) {
                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                 나의 TODO ({filteredMyTasks.filter((t: any) => t.is_completed).length}/{filteredMyTasks.length})
               </h4>
-              <ScrollArea className="h-[200px] rounded-xl border border-slate-100 p-2">
+              <ScrollArea className="h-[300px] rounded-xl border border-slate-100 p-2">
                 <div className="space-y-2">
                   {filteredMyTasks.length === 0 ? (
                     <p className="text-xs text-slate-400 text-center py-10">등록된 TODO가 없습니다.</p>
                   ) : (
                     filteredMyTasks.map((t: any) => (
-                      <div key={t.todo_id} className="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-50">
-                        {t.is_completed ? (
-                          <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
-                        ) : (
-                          <Circle className="w-4 h-4 text-slate-200 shrink-0" />
-                        )}
-                        <span className={`text-xs truncate ${t.is_completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
+                      <div key={t.todo_id} className="flex items-center group gap-2 p-2 rounded-lg bg-white border border-slate-50 hover:border-blue-100 transition-all">
+                        <button 
+                          onClick={() => onToggleTodo(t.todo_id, t.is_completed)}
+                          className={`shrink-0 transition-colors ${t.is_completed ? 'text-blue-500' : 'text-slate-300 hover:text-blue-400'}`}
+                        >
+                          {t.is_completed ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                        </button>
+                        <span className={`text-xs flex-1 truncate ${t.is_completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                           {t.name}
                         </span>
+                        <button 
+                          onClick={() => onDeleteTodo(t.todo_id)}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-500 transition-all"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     ))
                   )}
@@ -132,7 +141,7 @@ function MateCard({ mate, myTasks }: { mate: any; myTasks: any[] }) {
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                 상대의 TODO ({completedOpponent}/{totalOpponent})
               </h4>
-              <ScrollArea className="h-[200px] rounded-xl border border-slate-100 p-2">
+              <ScrollArea className="h-[300px] rounded-xl border border-slate-100 p-2 text-slate-400">
                 <div className="space-y-2">
                   {opponentTasks.length === 0 ? (
                     <p className="text-xs text-slate-400 text-center py-10">상대가 등록한 TODO가 없습니다.</p>
@@ -140,9 +149,9 @@ function MateCard({ mate, myTasks }: { mate: any; myTasks: any[] }) {
                     opponentTasks.map((t: any) => (
                       <div key={t.todo_id} className="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-50">
                         {t.is_completed ? (
-                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
                         ) : (
-                          <Circle className="w-4 h-4 text-slate-200 shrink-0" />
+                          <Circle className="w-5 h-5 text-slate-200 shrink-0" />
                         )}
                         <span className={`text-xs truncate ${t.is_completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                           {t.name}
@@ -233,7 +242,7 @@ export default function HomePage() {
              <div className="text-center py-4 text-slate-500">진행 중인 매칭이 없습니다.</div>
           ) : (
              activeMatchings.map((mate: any) => (
-               <MateCard key={mate.matching_id} mate={mate} myTasks={tasks} />
+               <MateCard key={mate.matching_id} mate={mate} myTasks={tasks} onToggleTodo={onToggleTodo} onDeleteTodo={onDeleteTodo} />
              ))
           )}
         </CardContent>

@@ -23,9 +23,11 @@ export default function RegisterPage() {
 
     try {
       await api.post("/auth/create_user", { name, email, password })
-      router.push("/login?registered=true")
+      // Automatically trigger email verification
+      await api.get("/auth/send_email", { params: { email } })
+      router.push("/login?registered=true&verify=true")
     } catch (err: any) {
-      setError(err.response?.data?.detail?.[0]?.msg || "회원가입에 실패했습니다.")
+      setError(err.response?.data?.detail || "회원가입에 실패했습니다.")
     } finally {
       setLoading(false)
     }
