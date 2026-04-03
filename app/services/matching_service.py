@@ -92,8 +92,12 @@ class MatchingService:
     def update_matching_status(
         self, db, matching_id, user_id, data: UpdateMatchingRequest
     ):
+        normalized_status = data.status
+        if normalized_status == "ACTIVATE":
+            normalized_status = "ACTIVE"
+
         result = self.repo.update_matching_and_teach(
-            db, matching_id, user_id, data.name, data.status
+            db, matching_id, user_id, data.name, normalized_status
         )
         if not result:
             raise ValueError("Matching not found")

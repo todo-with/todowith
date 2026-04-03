@@ -296,13 +296,18 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
               </AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-bold text-slate-900 leading-tight">
-                {currentRoom?.opponent_name || "채팅 기록 불러오는 중..."}
+              <div className="flex items-center gap-2">
+                <div className="font-bold text-slate-900 leading-tight">
+                  {currentRoom?.opponent_name || "채팅 기록 불러오는 중..."}
+                </div>
+                {matchingDetail?.is_all_completed && (
+                  <span className="px-1.5 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded">전체 완료</span>
+                )}
               </div>
               <div className="flex items-center gap-2 mt-0.5">
                 {teachingSkill && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100">
-                    <Users className="w-2.5 h-2.5 mr-1" /> 교습: {teachingSkill}
+                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold border ${matchingDetail?.status === "COMPLETED" ? 'bg-slate-100 text-slate-500 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
+                    <Users className="w-2.5 h-2.5 mr-1" /> 교습: {teachingSkill} {matchingDetail?.status === "COMPLETED" && "(완료)"}
                   </span>
                 )}
                 <span className="text-slate-300">

@@ -93,6 +93,8 @@ async def get_matching_detail(
             teaching_skill=result["teaching_skill"],
             learning_skill=result["learning_skill"],
             opponent_id=result["opponent_id"],
+            status=result["status"],
+            is_all_completed=result["is_all_completed"]
         )
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
