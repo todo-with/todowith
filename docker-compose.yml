@@ -42,7 +42,7 @@ services:
     env_file:
       - ./.env.secret
     depends_on:
-      - postgres
+      # - postgres
       - redis
     networks:
       - app-network
