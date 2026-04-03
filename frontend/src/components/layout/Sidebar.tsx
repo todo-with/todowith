@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Image from "next/image"
 import { Home, Users, MessageSquare, User, Bell } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -26,13 +27,18 @@ export default function Sidebar() {
 
   return (
     <div className="w-64 h-full bg-slate-50 flex flex-col pt-8 shrink-0">
-      <div className="px-6 mb-8 flex items-center gap-2">
-        <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
-          TODO
-        </div>
-        <span className="font-semibold text-sm flex-1">재능 교환 플랫폼</span>
-        
-        <button 
+      <div className="px-6 mb-8 flex items-center gap-3">
+        <Image 
+          src="/logo.png" 
+          alt="ToDoWith Logo" 
+          width={100} 
+          height={32} 
+          className="h-8 w-auto object-contain"
+          priority
+        />
+        <span className="font-bold text-lg text-slate-800 tracking-tight">ToDoWith</span>
+
+        <button
           onClick={() => setIsNotiOpen(true)}
           className="relative text-slate-500 hover:text-slate-800 transition-colors p-1"
         >
@@ -54,8 +60,8 @@ export default function Sidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors",
-                isActive 
-                  ? "bg-yellow-100 text-yellow-900 font-medium" 
+                isActive
+                  ? "bg-yellow-100 text-yellow-900 font-medium"
                   : "text-slate-600 hover:bg-slate-100"
               )}
             >
@@ -83,7 +89,7 @@ export default function Sidebar() {
           </Link>
 
           {user && (
-            <button 
+            <button
               onClick={() => {
                 localStorage.removeItem("access_token");
                 window.location.href = "/login";

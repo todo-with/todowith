@@ -170,12 +170,18 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
           isSystem: true
         }])
       } else if (data.type === "REPLY_MATCHING") {
+        // 매칭 응답(수락/거절) 수신 시 모든 관련 데이터 갱신
         queryClient.invalidateQueries({queryKey: ['matchingRequests']});
         queryClient.invalidateQueries({queryKey: ['chatRooms']});
+        
+        if (data.accept && data.matching_id) {
+           queryClient.invalidateQueries({queryKey: ['matchings', data.matching_id]});
+        }
+
         setMessages(prev => [...prev, {
           message_id: Date.now().toString() + Math.random(),
           sender_name: "System",
-          content: data.accept ? "매칭이 성사되었습니다! 이제TODO를 만들어 공부를 시작해보세요." : "매칭 요청이 거절되었습니다.",
+          content: data.accept ? "매칭이 성사되었습니다! 이제 TODO를 만들어 공부를 시작해보세요." : "매칭 요청이 거절되었습니다.",
           timestamp: new Date().toISOString(),
           isSystem: true
         }])

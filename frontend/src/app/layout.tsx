@@ -6,7 +6,7 @@ import Providers from '@/components/providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'TODO 재능 교환 플랫폼',
+  title: 'ToDoWith',
   description: '서로의 재능을 교환하는 놀라운 경험!',
 };
 
