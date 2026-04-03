@@ -31,8 +31,8 @@ services:
       context: .
     volumes:
       - .:/app
-    # uv run을 사용하여 uvicorn 실행
-    command: uv run main.py
+    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+    
     env_file:
       - ./.env.secret
     depends_on:
@@ -41,44 +41,7 @@ services:
     networks:
       - app-network
 
-  # # 4. Background Worker (LLM 요청, 채팅 분석 처리용)
-  # worker:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./backend:/app
-  #   # uv run을 사용하여 celery worker 실행
-  #   command: uv run celery -A app.celery_app worker --loglevel=info
-  #   environment:
-  #     - DATABASE_URL=postgresql://user:password@postgres:5432/mydb
-  #     - REDIS_URL=redis://redis:6379/0
-  #     - OPENAI_API_KEY=${OPENAI_API_KEY}
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #   networks:
-  #     - app-network
-
-  # # 5. Scheduler (2일에 1번 배치 처리 트리거용)
-  # beat:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./backend:/app
-  #   # uv run을 사용하여 celery beat(스케줄러) 실행
-  #   command: uv run celery -A app.celery_app beat --loglevel=info
-  #   environment:
-  #     - DATABASE_URL=postgresql://user:password@postgres:5432/mydb
-  #     - REDIS_URL=redis://redis:6379/0
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #   networks:
-  #     - app-network
-
-  # 6. Database (PostgreSQL)
+  # 4. Database (PostgreSQL)
   postgres:
     image: pgvector/pgvector:pg15
     ports:
@@ -93,7 +56,7 @@ services:
     networks:
       - app-network
 
-  # 7. In-Memory DB / Message Broker (Redis)
+  # 5. In-Memory DB / Message Broker (Redis)
   redis:
     image: redis:7-alpine
     ports:
@@ -104,7 +67,6 @@ services:
       - app-network
 
 volumes:
-  postgres_data:
   pg_data:
   redis_data:
 
