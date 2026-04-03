@@ -20,16 +20,16 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 function MateCard({ mate, myTasks, onToggleTodo, onDeleteTodo }: { mate: any; myTasks: any[]; onToggleTodo: any; onDeleteTodo: any }) {
   const { data: opponentTasksData } = useOpponentTasks(mate.matching_id)
   const { data: matchingDetail } = useMatchingDetail(mate.matching_id)
-  
+
   const opponentTasks = opponentTasksData?.items || []
   const filteredMyTasks = myTasks.filter((t: any) => t.matching_id === mate.matching_id)
   const completedOpponent = opponentTasks.filter((i: any) => i.is_completed).length
   const totalOpponent = opponentTasks.length
-  
+
   const totalTasks = filteredMyTasks.length + totalOpponent
   const totalCompleted = filteredMyTasks.filter((t: any) => t.is_completed).length + completedOpponent
   const totalProgress = totalTasks === 0 ? 0 : Math.round((totalCompleted / totalTasks) * 100)
-  
+
   const opponentName = matchingDetail?.opponent_name || "매칭상대"
 
   // Skip rendering if not ACTIVATE
@@ -76,7 +76,7 @@ function MateCard({ mate, myTasks, onToggleTodo, onDeleteTodo }: { mate: any; my
             매칭 상세 정보
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="mt-4 space-y-6">
           {/* Matching Summary Card */}
           <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 grid grid-cols-2 gap-4">
@@ -113,7 +113,7 @@ function MateCard({ mate, myTasks, onToggleTodo, onDeleteTodo }: { mate: any; my
                   ) : (
                     filteredMyTasks.map((t: any) => (
                       <div key={t.todo_id} className="flex items-center group gap-2 p-2 rounded-lg bg-white border border-slate-50 hover:border-blue-100 transition-all">
-                        <button 
+                        <button
                           onClick={() => onToggleTodo(t.todo_id, t.is_completed)}
                           className={`shrink-0 transition-colors ${t.is_completed ? 'text-blue-500' : 'text-slate-300 hover:text-blue-400'}`}
                         >
@@ -122,7 +122,7 @@ function MateCard({ mate, myTasks, onToggleTodo, onDeleteTodo }: { mate: any; my
                         <span className={`text-xs flex-1 truncate ${t.is_completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                           {t.name}
                         </span>
-                        <button 
+                        <button
                           onClick={() => onDeleteTodo(t.todo_id)}
                           className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-500 transition-all"
                         >
@@ -234,16 +234,16 @@ export default function HomePage() {
       <Card className="shadow-sm border-slate-100">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <span className="text-green-500">📈</span> 진행 중인 TODO 메이트
+            <span className="text-green-500">📈</span> 진행 중인 매칭
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {activeMatchings.length === 0 ? (
-             <div className="text-center py-4 text-slate-500">진행 중인 매칭이 없습니다.</div>
+            <div className="text-center py-4 text-slate-500">진행 중인 매칭이 없습니다.</div>
           ) : (
-             activeMatchings.map((mate: any) => (
-               <MateCard key={mate.matching_id} mate={mate} myTasks={tasks} onToggleTodo={onToggleTodo} onDeleteTodo={onDeleteTodo} />
-             ))
+            activeMatchings.map((mate: any) => (
+              <MateCard key={mate.matching_id} mate={mate} myTasks={tasks} onToggleTodo={onToggleTodo} onDeleteTodo={onDeleteTodo} />
+            ))
           )}
         </CardContent>
       </Card>
@@ -261,23 +261,23 @@ export default function HomePage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {isTasksLoading ? (
-             <div className="text-center py-8 text-slate-400">TODO를 불러오는 중...</div>
+            <div className="text-center py-8 text-slate-400">TODO를 불러오는 중...</div>
           ) : tasks.length === 0 ? (
-             <div className="text-center py-8 text-slate-500 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-               <p className="text-sm">아직 등록된 TODO가 없습니다.</p>
-               <p className="text-xs text-slate-400 mt-1">매칭된 메이트와 채팅에서 TODO를 추천받아보세요!</p>
-             </div>
+            <div className="text-center py-8 text-slate-500 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+              <p className="text-sm">아직 등록된 TODO가 없습니다.</p>
+              <p className="text-xs text-slate-400 mt-1">매칭된 메이트와 채팅에서 TODO를 추천받아보세요!</p>
+            </div>
           ) : (
             tasks.map((task: any) => (
               <div key={task.todo_id} className="flex items-center group gap-3 p-3 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all">
-                <button 
+                <button
                   onClick={() => onToggleTodo(task.todo_id, task.is_completed)}
                   disabled={updateTodo.isPending}
                   className={`shrink-0 transition-colors ${task.is_completed ? 'text-blue-500' : 'text-slate-300 hover:text-blue-400'}`}
                 >
                   {task.is_completed ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
                 </button>
-                
+
                 <div className="flex-1 min-w-0">
                   <div className={`font-semibold text-sm truncate ${task.is_completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                     {task.name}
@@ -292,7 +292,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => onDeleteTodo(task.todo_id)}
                   disabled={deleteTodo.isPending}
                   className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-red-500 transition-all rounded-lg hover:bg-red-50"

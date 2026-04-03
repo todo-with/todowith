@@ -92,14 +92,6 @@ export default function ProfileSkillsPage() {
             <p className="text-slate-600">나의 재능을 추가하고 배울 수 있는 기회를 넓혀보세요</p>
           </div>
         </div>
-        <Button 
-          onClick={handleSave} 
-          disabled={saving}
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 gap-2 font-bold shadow-lg shadow-blue-200"
-        >
-          <Save className="w-5 h-5" />
-          {saving ? "저장 중..." : "변경사항 저장"}
-        </Button>
       </div>
 
       <div className="space-y-6">
@@ -126,7 +118,7 @@ export default function ProfileSkillsPage() {
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </Badge>
-                ) )
+                ))
               )}
             </div>
             
@@ -188,7 +180,7 @@ export default function ProfileSkillsPage() {
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </Badge>
-                ) )
+                ))
               )}
             </div>
 
@@ -226,6 +218,23 @@ export default function ProfileSkillsPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="pt-8 border-t border-slate-100 flex justify-center">
+        <Button 
+          onClick={handleSave} 
+          disabled={saving}
+          className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-12 h-14 gap-3 font-bold shadow-xl shadow-blue-200/50 text-lg sm:w-80 group transition-all hover:scale-105"
+        >
+          {saving ? (
+            "저장 중..."
+          ) : (
+            <>
+              <Save className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+              변경사항 저장하기
+            </>
+          )}
+        </Button>
       </div>
     </div>
   )

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Heart, MessageSquare, Search, BookOpen, PenTool, User as UserIcon } from "lucide-react"
 import { useAnnouncements, useAllSkills, useMyAnnouncements, useAnnouncementDetail } from "@/hooks/useQueries"
 import { useUserProfileContext } from "@/context/UserProfileContext"
@@ -179,12 +179,13 @@ export default function MatchingPage() {
             matches.map((match: any) => (
               <Card key={match.id} className="border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                 <CardContent className="p-0">
-                  <div className="flex justify-between p-6">
-                    <div 
+                  <div className="flex justify-between p-6 items-center">
+                    <div
                       className="flex gap-4 cursor-pointer flex-1"
                       onClick={() => setDetailId(match.id)}
                     >
                       <Avatar className="w-16 h-16">
+                        <AvatarImage src="/duck_profile.png" />
                         <AvatarFallback className="text-lg bg-blue-100 text-blue-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
                       </Avatar>
 
@@ -200,13 +201,9 @@ export default function MatchingPage() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 items-start mt-2">
-                      <Button variant="outline" size="icon" className="text-slate-400 hover:text-red-500 rounded-full w-10 h-10">
-                        <Heart className="w-5 h-5" />
-                      </Button>
-                      
+                    <div className="flex gap-2 items-center">
                       {match.user_id === userProfile?.id ? (
-                        <Button 
+                        <Button
                           variant="secondary"
                           onClick={() => openEditModal(match.id)}
                           className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold gap-2 pl-4 pr-5 rounded-full"
@@ -231,7 +228,7 @@ export default function MatchingPage() {
             ))
           )}
         </TabsContent>
-        {/* Fill others with dummy empty state or identical list for now */}
+
         <TabsContent value="teach" className="space-y-4 outline-none">
           {isLoading ? (
             <div className="text-center py-10 text-slate-500">불러오는 중...</div>
@@ -247,12 +244,13 @@ export default function MatchingPage() {
               .map((match: any) => (
                 <Card key={match.id} className="border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                   <CardContent className="p-0">
-                    <div className="flex justify-between p-6">
+                    <div className="flex justify-between p-6 items-center">
                       <div 
                         className="flex gap-4 cursor-pointer flex-1"
                         onClick={() => setDetailId(match.id)}
                       >
                         <Avatar className="w-16 h-16">
+                          <AvatarImage src="/duck_profile.png" />
                           <AvatarFallback className="text-lg bg-green-100 text-green-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
                         </Avatar>
                         <div className="space-y-2 flex flex-col justify-center">
@@ -263,7 +261,7 @@ export default function MatchingPage() {
                           </div>
                         </div>
                       </div>
-                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full mt-2">메시지 보내기</Button>
+                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full">메시지 보내기</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -286,12 +284,13 @@ export default function MatchingPage() {
               .map((match: any) => (
                 <Card key={match.id} className="border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                   <CardContent className="p-0">
-                    <div className="flex justify-between p-6">
-                      <div 
+                    <div className="flex justify-between p-6 items-center">
+                      <div
                         className="flex gap-4 cursor-pointer flex-1"
                         onClick={() => setDetailId(match.id)}
                       >
                         <Avatar className="w-16 h-16">
+                          <AvatarImage src="/duck_profile.png" />
                           <AvatarFallback className="text-lg bg-orange-100 text-orange-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
                         </Avatar>
                         <div className="space-y-2 flex flex-col justify-center">
@@ -302,7 +301,7 @@ export default function MatchingPage() {
                           </div>
                         </div>
                       </div>
-                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full mt-2">메시지 보내기</Button>
+                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full">메시지 보내기</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -319,12 +318,13 @@ export default function MatchingPage() {
             myAnnouncements.map((match: any) => (
               <Card key={match.id} className="border-blue-100 bg-blue-50/20 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                 <CardContent className="p-0">
-                  <div className="flex justify-between p-6">
-                    <div 
+                  <div className="flex justify-between p-6 items-center">
+                    <div
                       className="flex gap-4 cursor-pointer flex-1"
                       onClick={() => setDetailId(match.id)}
                     >
-                      <Avatar className="w-16 h-16 border-2 border-blue-200">
+                      <Avatar className="w-16 h-16 border border-blue-100 shadow-sm">
+                        <AvatarImage src="/duck_profile.png" />
                         <AvatarFallback className="text-lg bg-white text-blue-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
                       </Avatar>
                       <div className="space-y-2 flex flex-col justify-center">
@@ -336,7 +336,7 @@ export default function MatchingPage() {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <Button 
+                      <Button
                         variant="default"
                         onClick={() => openEditModal(match.id)}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2 pl-4 pr-5 rounded-full shadow-sm"
@@ -355,12 +355,12 @@ export default function MatchingPage() {
 
       {/* Announcement Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl w-11/12 bg-white p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+        <DialogContent className="max-w-6xl w-11/12 bg-white p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
           <form onSubmit={handleSubmit}>
             <DialogHeader className="p-6 bg-slate-900 text-white">
               <DialogTitle className="text-xl">{editingId ? "공고 수정하기" : "새로운 재능 교환 공고 등록"}</DialogTitle>
             </DialogHeader>
-            
+
             <div className="p-6 sm:p-8 space-y-6 max-h-[70vh] overflow-y-auto">
               {/* Form implementation content ... */}
               {/* Skills Grid */}
@@ -370,7 +370,7 @@ export default function MatchingPage() {
                   <select
                     className="w-full h-11 px-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm bg-white"
                     value={formData.can_teach_skill}
-                    onChange={(e) => setFormData({...formData, can_teach_skill: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, can_teach_skill: e.target.value })}
                     required
                   >
                     <option value="" disabled>기술 선택...</option>
@@ -383,21 +383,21 @@ export default function MatchingPage() {
                   </select>
 
                   <Label className="text-sm font-bold text-slate-700 block mt-4">가르칠 수 있는 수준</Label>
-                  <Input 
+                  <Input
                     placeholder="예: 입문, 보통, 심화"
                     value={formData.can_teach_difficulty}
-                    onChange={(e) => setFormData({...formData, can_teach_difficulty: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, can_teach_difficulty: e.target.value })}
                     required
                     className="h-11 border-slate-200 focus:ring-blue-500"
                   />
                 </div>
-                
+
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-slate-700">배우고 싶은 재능</Label>
                   <select
                     className="w-full h-11 px-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm bg-white"
                     value={formData.want_to_skill}
-                    onChange={(e) => setFormData({...formData, want_to_skill: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, want_to_skill: e.target.value })}
                     required
                   >
                     <option value="" disabled>기술 선택...</option>
@@ -408,12 +408,12 @@ export default function MatchingPage() {
                       <option disabled>등록된 재능이 없습니다</option>
                     )}
                   </select>
-                  
+
                   <Label className="text-sm font-bold text-slate-700 block mt-4">배우고 싶은 수준</Label>
-                  <Input 
+                  <Input
                     placeholder="예: 기초부터, 중급과정"
                     value={formData.want_to_difficulty}
-                    onChange={(e) => setFormData({...formData, want_to_difficulty: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, want_to_difficulty: e.target.value })}
                     required
                     className="h-11 border-slate-200 focus:ring-blue-500"
                   />
@@ -424,22 +424,22 @@ export default function MatchingPage() {
               <div className="space-y-6 pt-4 border-t border-slate-100">
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-slate-700">재능 나눔 메시지 (가르칠 내용)</Label>
-                  <textarea 
+                  <textarea
                     className="w-full h-24 p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-sm"
                     placeholder="상대방에게 가르쳐줄 수 있는 내용을 상세히 적어주세요."
                     value={formData.can_teach_message}
-                    onChange={(e) => setFormData({...formData, can_teach_message: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, can_teach_message: e.target.value })}
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-slate-700">배우고 싶은 점 (요청 사항)</Label>
-                  <textarea 
+                  <textarea
                     className="w-full h-24 p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-sm"
                     placeholder="상대방으로부터 배우고 싶은 점을 자유롭게 적어주세요."
                     value={formData.want_to_message}
-                    onChange={(e) => setFormData({...formData, want_to_message: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, want_to_message: e.target.value })}
                     required
                   />
                 </div>
@@ -447,16 +447,16 @@ export default function MatchingPage() {
             </div>
 
             <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100 flex flex-row justify-end space-x-2">
-              <Button 
-                type="button" 
-                variant="ghost" 
+              <Button
+                type="button"
+                variant="ghost"
                 onClick={() => setIsDialogOpen(false)}
                 className="rounded-xl font-semibold text-slate-500 hover:text-slate-900"
               >
                 취소
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={submitting}
                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-8 font-bold"
               >
@@ -469,14 +469,15 @@ export default function MatchingPage() {
 
       {/* Detail View Dialog */}
       <Dialog open={!!detailId} onOpenChange={(o) => (!o && setDetailId(null))}>
-        <DialogContent className="max-w-xl w-11/12 bg-white p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+        <DialogContent className="max-w-4xl w-11/12 bg-white p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
           {detailLoading ? (
-             <div className="p-12 text-center text-slate-500">공고의 상세 정보를 불러오는 중입니다...</div>
+            <div className="p-12 text-center text-slate-500">공고의 상세 정보를 불러오는 중입니다...</div>
           ) : detailData ? (
             <>
               <DialogHeader className="p-6 pb-4 border-b border-slate-100 bg-slate-50/50">
                 <div className="flex items-center gap-4">
                   <Avatar className="w-14 h-14 border border-white shadow-sm">
+                    <AvatarImage src="/duck_profile.png" />
                     <AvatarFallback className="bg-blue-100 text-blue-700 font-bold text-xl">{detailData.username?.[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col text-left">
@@ -538,8 +539,8 @@ export default function MatchingPage() {
                 {detailData.user_id !== userProfile?.id && (
                   <Button
                     onClick={() => {
-                        setDetailId(null)
-                        handleSendMessage(detailData.id, detailData.username)
+                      setDetailId(null)
+                      handleSendMessage(detailData.id, detailData.username)
                     }}
                     disabled={creating === detailData.id}
                     className="w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold py-6 text-base rounded-xl shadow-sm"
