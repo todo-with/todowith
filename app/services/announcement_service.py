@@ -42,8 +42,10 @@ class AnnouncementService:
             },
         )
 
-    def get_all_announcements(self, db: Session) -> list[AnnounceItem]:
-        res = self.repo.get_all_detail(db)
+    def get_all_announcements(
+        self, db: Session, current_user_id: UUID, keyword: str | None = None
+    ) -> list[AnnounceItem]:
+        res = self.repo.get_all_detail(db, current_user_id, keyword)
         if not res:
             return []
         return [
@@ -121,8 +123,8 @@ class AnnouncementService:
             user_id=str(user_id),
             want_to_skill=want_skill_name,
             can_teach_skill=can_teach_skill_name,
-            want_to_message=announcement.want_to_message, # type: ignore
-            can_teach_message=announcement.can_teach_message, # type: ignore
-            want_to_difficulty=announcement.want_to_difficulty, # type: ignore
-            can_teach_difficulty=announcement.can_teach_difficulty, # type: ignore
+            want_to_message=announcement.want_to_message,  # type: ignore
+            can_teach_message=announcement.can_teach_message,  # type: ignore
+            want_to_difficulty=announcement.want_to_difficulty,  # type: ignore
+            can_teach_difficulty=announcement.can_teach_difficulty,  # type: ignore
         )

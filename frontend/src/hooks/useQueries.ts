@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import type { UserProfile } from '@/types/user';
 
 // User Profile
 export const useUserProfile = () => {
-  return useQuery({
+  return useQuery<UserProfile>({
     queryKey: ['userProfile'],
     queryFn: async () => {
-      const { data } = await api.get('/user/profile');
+      const { data } = await api.get<UserProfile>('/user/profile');
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -19,6 +20,18 @@ export const useMyMatchings = () => {
     queryKey: ['myMatchings'],
     queryFn: async () => {
       const { data } = await api.get('/matching/my');
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+// My Skills (Profile Skills)
+export const useAllSkills = () => {
+  return useQuery({
+    queryKey: ['allSkills'],
+    queryFn: async () => {
+      const { data } = await api.get('/skill/all');
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -51,11 +64,13 @@ export const useOpponentTasks = (matchingId: string | null) => {
 };
 
 // Announcements
-export const useAnnouncements = () => {
+export const useAnnouncements = (keyword?: string) => {
   return useQuery({
-    queryKey: ['announcements'],
+    queryKey: ['announcements', keyword],
     queryFn: async () => {
-      const { data } = await api.get('/announcement/all');
+      const { data } = await api.get('/announcement/all', {
+        params: { keyword: keyword || undefined }
+      });
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -88,5 +103,19 @@ export const useChatHistory = (roomId: string | null) => {
     enabled: !!roomId,
     staleTime: 0,
     gcTime: 0,
+  });
+};
+
+// Available Skills
+export const useAvailableSkills = (keyword?: string) => {
+  return useQuery({
+    queryKey: ['availableSkills', keyword],
+    queryFn: async () => {
+      const { data } = await api.get('/skill/all_available', {
+        params: { keyword: keyword || undefined }
+      });
+      return data;
+    },
+    staleTime: 60 * 60 * 1000,
   });
 };

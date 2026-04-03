@@ -1,14 +1,20 @@
 import logging
 from typing import List
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_announcement_service
 from app.core.verify_jwt import get_current_user_id
 from app.dependencies.database import get_db
-from app.schemas.announcement_schema import CreateAnnounceRequest, AnnounceItem, ViewDetailAnnounceResponse, \
-    EditAnnounceResponse, EditAnnounceRequest
+from app.schemas.announcement_schema import (
+    CreateAnnounceRequest,
+    AnnounceItem,
+    ViewDetailAnnounceResponse,
+    EditAnnounceResponse,
+    EditAnnounceRequest,
+)
 from app.services.announcement_service import AnnouncementService
 
 router = APIRouter(
@@ -18,10 +24,15 @@ router = APIRouter(
 
 
 @router.get("/all", response_model=List[AnnounceItem])
-def get_all_announcements(db: Session = Depends(get_db), _: str = Depends(get_current_user_id), service: AnnouncementService = Depends(get_announcement_service)) -> List[AnnounceItem]:
+def get_all_announcements(
+    db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user_id),
+    service: AnnouncementService = Depends(get_announcement_service),
+    keyword: str | None = Query(default=None),
+) -> List[AnnounceItem]:
     logger = logging.getLogger("__main__")
     try:
-        get_announcements = service.get_all_announcements(db)
+        get_announcements = service.get_all_announcements(db, user_id, keyword)
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(status_code=500, detail="Failed to get announcements")
@@ -29,10 +40,17 @@ def get_all_announcements(db: Session = Depends(get_db), _: str = Depends(get_cu
 
 
 @router.get("/detail/{announcement_id}", response_model=ViewDetailAnnounceResponse)
-def get_announcement_detail(announcement_id: str, db: Session = Depends(get_db), _: str = Depends(get_current_user_id), service: AnnouncementService = Depends(get_announcement_service)) -> ViewDetailAnnounceResponse:
+def get_announcement_detail(
+    announcement_id: str,
+    db: Session = Depends(get_db),
+    _: str = Depends(get_current_user_id),
+    service: AnnouncementService = Depends(get_announcement_service),
+) -> ViewDetailAnnounceResponse:
     logger = logging.getLogger("__main__")
     try:
-        res: ViewDetailAnnounceResponse = service.get_detail_announcement(db, announcement_id)
+        res: ViewDetailAnnounceResponse = service.get_detail_announcement(
+            db, announcement_id
+        )
     except ValueError as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="Announcement not found")
@@ -40,9 +58,16 @@ def get_announcement_detail(announcement_id: str, db: Session = Depends(get_db),
 
 
 @router.post("")
-def create_announcement(create_announcement_request: CreateAnnounceRequest, user_id: str = Depends(get_current_user_id), service: AnnouncementService = Depends(get_announcement_service), db = Depends(get_db))->str:
+def create_announcement(
+    create_announcement_request: CreateAnnounceRequest,
+    user_id: str = Depends(get_current_user_id),
+    service: AnnouncementService = Depends(get_announcement_service),
+    db=Depends(get_db),
+) -> str:
     try:
-        announcement = service.create_announcement(db=db, payload=create_announcement_request, user_id=user_id)
+        announcement = service.create_announcement(
+            db=db, payload=create_announcement_request, user_id=user_id
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return str(announcement.id)

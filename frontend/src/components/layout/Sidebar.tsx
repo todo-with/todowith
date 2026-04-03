@@ -2,20 +2,21 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Users, MessageSquare } from "lucide-react"
+import { Home, Users, MessageSquare, User } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useUserProfile } from "@/hooks/useQueries"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useUserProfileContext } from "@/context/UserProfileContext"
 
 const navItems = [
   { href: "/", label: "홈", icon: Home },
   { href: "/matching", label: "매칭", icon: Users },
   { href: "/messages", label: "메시지", icon: MessageSquare },
+  { href: "/profile", label: "프로필", icon: User },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { data: user, isLoading } = useUserProfile()
+  const { data: user, isLoading } = useUserProfileContext()
 
   return (
     <div className="w-64 border-r h-screen bg-slate-50 flex flex-col pt-8">
@@ -58,7 +59,18 @@ export default function Sidebar() {
             <span className="text-sm font-semibold">
               {isLoading ? "로딩 중..." : (user?.name || "로그인 필요")}
             </span>
-            <span className="text-xs text-slate-500">프로필 보기</span>
+            <span className="text-xs text-slate-500 line-clamp-1">
+              {user?.description || "프로필 소개를 추가해보세요"}
+            </span>
+            {user?.can_teach_skills && user.can_teach_skills.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {user.can_teach_skills.map(skill => (
+                  <span key={skill} className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded font-medium">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           {user && (
             <button 

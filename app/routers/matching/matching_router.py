@@ -51,9 +51,6 @@ async def get_my_matching(
     try:
         matchings = service.get_my_matchings(db=db, user_id=user_id)
 
-        if not matchings:
-            raise HTTPException(status_code=404, detail="참여 중인 매칭이 없습니다.")
-
         return [MatchingItem(
             matching_id=str(match.matching_id),
             name=match.name,
