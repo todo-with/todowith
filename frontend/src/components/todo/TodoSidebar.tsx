@@ -102,7 +102,7 @@ export function TodoSidebar({
   }
 
   return (
-    <div className="w-80 h-full border-l border-slate-200 bg-white flex flex-col hidden md:flex shrink-0">
+    <div className="w-96 h-full border-l border-slate-200 bg-white flex flex-col hidden md:flex shrink-0">
       <div className="p-4 border-b border-slate-200 bg-slate-50 shrink-0">
         <h2 className="font-bold text-slate-800 text-lg flex items-center gap-2">
           📝 매칭 TODO 관리

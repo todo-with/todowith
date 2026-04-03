@@ -43,9 +43,9 @@ export default function Sidebar() {
         <Image
           src="/logo.png"
           alt="ToDoWith Logo"
-          width={220}
-          height={96}
-          className="h-24 w-auto object-contain"
+          width={260}
+          height={120}
+          className="h-28 w-auto object-contain"
           priority
         />
       </div>

@@ -40,8 +40,8 @@ export default function MainLayout({
       <div className="flex h-screen overflow-hidden bg-slate-50">
         <Sidebar />
         <main className="flex-1 bg-white overflow-y-auto rounded-tl-[32px] shadow-2xl border-l border-t border-slate-100">
-          <div className="py-12 px-8">
-            <div className="max-w-5xl mx-auto">
+          <div className="pt-12 pb-6 px-4 lg:px-6 h-full">
+            <div className="max-w-[1600px] mx-auto h-full">
               {children}
             </div>
           </div>

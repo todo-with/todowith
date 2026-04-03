@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Send, MoreVertical, Handshake, Check, X, Users, Sparkles } from "lucide-react"
 import { useEffect, useState, useRef, use } from "react"
 import { useChatHistory, useChatRooms, useUserProfile, useMatchingRequests, useMatchingDetail, useAnnouncementDetail, useUpdateMatching } from "@/hooks/useQueries"
@@ -297,6 +297,7 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
         <div className="h-16 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0 shadow-sm z-10">
           <div className="flex items-center gap-3">
             <Avatar className="w-10 h-10">
+              <AvatarImage src="/duck_profile.png" />
               <AvatarFallback className="bg-slate-200 font-bold">
                 {currentRoom?.opponent_name?.[0] || "?"}
               </AvatarFallback>
@@ -307,7 +308,7 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
                   {currentRoom?.opponent_name || "채팅 기록 불러오는 중..."}
                 </div>
                 {matchingDetail?.is_all_completed && (
-                  <span className="px-1.5 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded">전체 완료</span>
+                  <span className="px-1.5 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded">전체 완료</span>
                 )}
               </div>
               <div className="flex items-center gap-2 mt-0.5">
@@ -320,7 +321,7 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
                   <Check className="w-3 h-3 rotate-90" />
                 </span>
                 {learningSkill && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-green-50 text-green-600 border border-green-100">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-yellow-100 text-yellow-700 border border-yellow-200">
                     <Sparkles className="w-2.5 h-2.5 mr-1" /> 학습: {learningSkill}
                   </span>
                 )}
@@ -338,7 +339,7 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
                       variant="ghost" 
                       onClick={() => handleReplyMatching(true, receivedRequest.matching_request_id)}
                       disabled={isReplying}
-                      className="h-8 text-green-600 hover:text-green-700 hover:bg-green-50 font-bold disabled:opacity-50"
+                      className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-bold disabled:opacity-50"
                     >
                       <Check className="w-4 h-4 mr-1" />수락
                     </Button>
@@ -347,7 +348,7 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
                       variant="ghost" 
                       onClick={() => handleReplyMatching(false, receivedRequest.matching_request_id)}
                       disabled={isReplying}
-                      className="h-8 text-slate-500 hover:text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      className="h-8 text-slate-500 hover:text-slate-700 hover:bg-slate-200 font-bold disabled:opacity-50"
                     >
                       <X className="w-4 h-4 mr-1" />거절
                     </Button>
