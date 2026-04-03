@@ -1,12 +1,12 @@
 from typing import cast
 from uuid import UUID
 
-from sqlalchemy import Row, or_
+from sqlalchemy import Row, func, or_
 from sqlalchemy.orm import Session, aliased
 
 from app.models.announcement_models import Announcement
 from app.models.chat_models import Chatroom, JoinChat
-from app.models.skill_models import Skill
+from app.models.skill_models import CanTeach, Skill, Want
 from app.models.user_models import User
 
 
@@ -60,6 +60,79 @@ class AnnouncementRepository:
         results = query.all()
         return results
 
+    def get_recommended_announcements(
+        self, db: Session, target_user_id: UUID
+    ) -> list[Row[tuple[Announcement, str, str, str]]]:
+        WantSkill = aliased(Skill)
+        TeachSkill = aliased(Skill)
+
+        # [Step 1] 현재 유저의 WANT 스킬 벡터들 가져오기
+        user_want_vectors = (
+            db.query(Skill.name_embedding)
+            .join(Want, Skill.id == Want.skill_id)
+            .filter(Want.user_id == target_user_id)
+            .all()
+        )
+        user_want_vectors = [v[0] for v in user_want_vectors if v[0] is not None]
+
+        # [Step 2] 현재 유저의 CAN_TEACH 스킬 벡터들 가져오기
+        user_can_teach_vectors = (
+            db.query(Skill.name_embedding)
+            .join(CanTeach, Skill.id == CanTeach.skill_id)
+            .filter(CanTeach.user_id == target_user_id)
+            .all()
+        )
+        user_can_teach_vectors = [
+            v[0] for v in user_can_teach_vectors if v[0] is not None
+        ]
+
+        # [Step 3] 메인 쿼리 작성
+        # 유저 스킬이 없을 경우를 대비해 기본 벡터 처리 (0점 처리용)
+        if not user_want_vectors or not user_can_teach_vectors:
+            return self.get_all_detail(
+                db, target_user_id
+            )  # 벡터 없으면 일반 조회로 fallback
+
+        # 각 공고별로 유저 스킬셋과의 최소 거리를 계산하는 식 정의
+        # pgvector의 <=> 연산자를 사용 (cosine_distance)
+
+        # 1. 공고가 배우고 싶어하는 스킬 <-> 내가 가르칠 수 있는 스킬 중 최단거리
+        dist_teach = func.least(
+            *[
+                WantSkill.name_embedding.cosine_distance(v)
+                for v in user_can_teach_vectors
+            ]
+        ).label("dist_teach")
+
+        # 2. 공고가 가르쳐줄 스킬 <-> 내가 배우고 싶은 스킬 중 최단거리
+        dist_want = func.least(
+            *[TeachSkill.name_embedding.cosine_distance(v) for v in user_want_vectors]
+        ).label("dist_want")
+
+        total_distance = (dist_teach + dist_want).label("total_distance")
+
+        # [Step 4] 정렬 및 쿼리 실행
+        results = (
+            db.query(
+                Announcement,
+                WantSkill.name.label("want_to_skill_name"),
+                TeachSkill.name.label("can_teach_name"),
+                User.name.label("user_name"),
+            )
+            .join(WantSkill, Announcement.want_to_skill == WantSkill.id)
+            .join(TeachSkill, Announcement.can_teach_skill == TeachSkill.id)
+            .join(User, User.id == Announcement.user_id)
+            .filter(
+                Announcement.visible == True, Announcement.user_id != target_user_id
+            )
+            .order_by(
+                total_distance.asc()  # 거리가 작은 순(유사한 순)으로 정렬
+            )
+            .all()
+        )
+
+        return results
+
     def get_by_id_detail(
         self, db: Session, announcement_id: UUID
     ) -> Row[tuple[Announcement, str | None, str | None, str]] | None:
@@ -105,7 +178,7 @@ class AnnouncementRepository:
             .outerjoin(teach_skill, Announcement.can_teach_skill == teach_skill.id)
             .join(User, User.id == Announcement.user_id)
             .all()
-        )
+        )  # type: ignore
 
     def get_by_id(self, db: Session, announcement_id: UUID) -> Announcement | None:
         result = (

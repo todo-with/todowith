@@ -271,27 +271,40 @@ class MatchingRepository:
             return None
 
         # ⭐ 중요: DB 모델이 아니라, 라우터가 기대하는 형태의 '딕셔너리'나 '객체'로 반환합니다.
+        
+        # 3. 전체 매칭 상태 확인
+        all_teaches = db.query(Teach).filter(Teach.matching_id == matching_id).all()
+        is_all_completed = len(all_teaches) == 2 and all(t.status == "COMPLETED" for t in all_teaches)
+        
+        # 4. 내 교습 상태 확인
+        my_teach = db.query(Teach).filter(Teach.matching_id == matching_id, Teach.teacher_id == current_user_id).first()
+
         return {
             "opponent_name": opponent_data.name,
             "opponent_id": str(opponent_data.id),
             "teaching_skill": my_skill_data.name if my_skill_data else "Unknown",
-            "learning_skill": opponent_data.skill_name # 상대방이 가르치는 게 내가 배우는 것
+            "learning_skill": opponent_data.skill_name, # 상대방이 가르치는 게 내가 배우는 것
+            "status": my_teach.status if my_teach else "ACTIVE",
+            "is_all_completed": is_all_completed
         }
     
-    def update_matching_and_teach(self, db: Session, matching_id: UUID, user_id: UUID, name: str, status: str):
+    def update_matching_and_teach(self, db: Session, matching_id: UUID, user_id: UUID, name: str | None, status: str | None):
         # 1. MATCHING 테이블 존재 확인 및 이름 업데이트
         matching = db.query(Matching).filter(Matching.id == matching_id).first()
         if not matching:
             return None
-        matching.name = name # type: ignore
+            
+        if name is not None:
+            matching.name = name # type: ignore
 
         # 2. 나의 TEACH 상태 업데이트
-        my_teach = db.query(Teach).filter(
-            Teach.matching_id == matching_id, 
-            Teach.teacher_id == user_id
-        ).first()
-        if my_teach:
-            my_teach.status = status # type: ignore
+        if status is not None:
+            my_teach = db.query(Teach).filter(
+                Teach.matching_id == matching_id, 
+                Teach.teacher_id == user_id
+            ).first()
+            if my_teach:
+                my_teach.status = status # type: ignore
 
         db.flush() # 변경 사항 임시 반영 (조회를 위해)
 
@@ -299,6 +312,10 @@ class MatchingRepository:
         all_teaches = db.query(Teach).filter(Teach.matching_id == matching_id).all()
         # 모든 TEACH의 status가 'COMPLETED'인지 체크 (두 개의 TEACH가 모두 COMPLETED여야 함)
         is_all_completed = len(all_teaches) == 2 and all(t.status == "COMPLETED" for t in all_teaches)
+        
+        # 4. MATCHING 테이블의 matching_status (전체 완료 여부) 업데이트
+        # True면 진행 중, False면 종료 (스키마 기준)
+        matching.matching_status = not is_all_completed # type: ignore
 
         db.commit()
         return matching, is_all_completed

@@ -45,6 +45,18 @@ class AnnouncementService:
     def get_all_announcements(
         self, db: Session, current_user_id: UUID, keyword: str | None = None
     ) -> list[AnnounceItem]:
+        if keyword is None:
+            get_recommended_announcements = self.repo.get_recommended_announcements(db, current_user_id)
+            return [
+                AnnounceItem(
+                    id=str(announcement.id),
+                    username=user_name,
+                    user_id=str(announcement.user_id),
+                    want_to_skill=want_to,
+                    can_teach_skill=can_teach,
+                )
+                for announcement, want_to, can_teach, user_name in get_recommended_announcements
+            ]
         res = self.repo.get_all_detail(db, current_user_id, keyword)
         if not res:
             return []
