@@ -93,7 +93,7 @@ function MateCard({ mate, myTasks, onToggleTodo, onDeleteTodo }: { mate: any; my
               <p className="text-sm font-bold text-slate-700">{mate.teaching_skill}</p>
             </div>
             <div className="pt-3 border-t border-slate-200">
-              <p className="text-[10px] font-bold text-green-500 uppercase">내가 배우는 스킬</p>
+              <p className="text-[10px] font-bold text-yellow-600 uppercase">내가 배우는 스킬</p>
               <p className="text-sm font-bold text-slate-700">{mate.learning_skill}</p>
             </div>
           </div>
@@ -138,7 +138,7 @@ function MateCard({ mate, myTasks, onToggleTodo, onDeleteTodo }: { mate: any; my
             {/* Opponent TODOs */}
             <div className="space-y-3">
               <h4 className="font-bold text-sm flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <div className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
                 상대의 TODO ({completedOpponent}/{totalOpponent})
               </h4>
               <ScrollArea className="h-[300px] rounded-xl border border-slate-100 p-2 text-slate-400">
@@ -203,12 +203,12 @@ export default function HomePage() {
   return (
     <div className="space-y-8 pb-10">
       {/* Greeting Banner */}
-      <div className="bg-orange-50 rounded-2xl p-8 flex justify-between items-center">
+      <div className="bg-yellow-50/50 border border-yellow-100 rounded-2xl p-8 flex justify-between items-center shadow-sm">
         <div className="space-y-4">
           <h1 className="text-3xl font-bold text-slate-900">안녕하세요!</h1>
           <p className="text-slate-600">오늘도 새로운 재능을 배우고 나누어보세요</p>
           <Link href="/matching">
-            <Button className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-semibold gap-2">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-2">
               <span className="text-lg">✨</span> 매칭 시작하기
             </Button>
           </Link>
@@ -234,7 +234,7 @@ export default function HomePage() {
       <Card className="shadow-sm border-slate-100">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <span className="text-green-500">📈</span> 진행 중인 매칭
+            <span className="text-blue-500">📈</span> 진행 중인 매칭
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">

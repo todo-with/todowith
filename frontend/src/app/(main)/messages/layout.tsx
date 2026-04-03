@@ -1,7 +1,7 @@
 "use client"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useChatRooms } from "@/hooks/useQueries"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -22,7 +22,7 @@ export default function MessagesLayout({ children }: { children: React.ReactNode
       <div className="flex-1 flex bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         
         {/* Left Side: Chat List */}
-        <div className="w-[320px] bg-slate-50 border-r border-slate-200 flex flex-col shrink-0">
+        <div className="w-[380px] bg-slate-50 border-r border-slate-200 flex flex-col shrink-0">
           <ScrollArea className="flex-1">
             {isLoading ? (
                <div className="text-center py-6 text-sm text-slate-500">불러오는 중...</div>
@@ -40,6 +40,7 @@ export default function MessagesLayout({ children }: { children: React.ReactNode
                     <div className="flex gap-3">
                       <div className="relative">
                         <Avatar className="w-12 h-12">
+                          <AvatarImage src="/duck_profile.png" />
                           <AvatarFallback className="bg-slate-200 font-bold text-slate-600">
                             {room.opponent_name?.[0] || "?"}
                           </AvatarFallback>
@@ -49,23 +50,23 @@ export default function MessagesLayout({ children }: { children: React.ReactNode
                         <div className="flex justify-between items-start mb-1">
                           <div className="flex flex-col gap-1">
                             <span className="font-bold text-slate-900 leading-tight">{room.opponent_name}</span>
-                            <div className="flex flex-wrap items-center gap-1 mt-1">
+                            <div className="flex flex-wrap items-center gap-1.5 mt-2">
                               {room.matching_id ? (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-500 text-white border border-green-600 uppercase tracking-tighter">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-600 text-white border border-blue-700 uppercase tracking-tight shadow-sm">
                                   매칭 완료
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 text-slate-600 border border-slate-300 uppercase tracking-tighter">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-600 border border-slate-300 uppercase tracking-tight">
                                   매칭 대기
                                 </span>
                               )}
                               {room.teaching_skill && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
                                   교습: {room.teaching_skill}
                                 </span>
                               )}
                               {room.learning_skill && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-50 text-green-600 border border-green-100 whitespace-nowrap">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 border border-yellow-200 whitespace-nowrap">
                                   학습: {room.learning_skill}
                                 </span>
                               )}

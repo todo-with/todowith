@@ -489,46 +489,46 @@ export default function MatchingPage() {
 
               <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 mb-2 border-b border-green-500/20 pb-2">
-                    <PenTool className="w-5 h-5 text-green-600" />
-                    <h3 className="text-lg text-green-700 font-bold">내가 가르쳐 줄게요</h3>
+                  <div className="flex items-center gap-2 mb-2 border-b border-blue-500/20 pb-2">
+                    <PenTool className="w-5 h-5 text-blue-600" />
+                    <h3 className="text-lg text-blue-700 font-bold">내가 가르쳐 줄게요</h3>
                   </div>
-                  <div className="bg-green-50/50 p-4 rounded-xl space-y-3">
+                  <div className="bg-blue-50/50 p-4 rounded-xl space-y-3">
                     <div className="flex flex-col sm:flex-row gap-4">
-                      <div className="flex-1 bg-white p-3 rounded-lg border border-green-100 shadow-sm">
-                        <span className="text-xs text-green-600 font-bold block mb-1">재능 분야</span>
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-blue-100 shadow-sm">
+                        <span className="text-xs text-blue-600 font-bold block mb-1">재능 분야</span>
                         <span className="text-slate-800 font-semibold text-[15px]">{detailData.can_teach_skill}</span>
                       </div>
-                      <div className="flex-1 bg-white p-3 rounded-lg border border-green-100 shadow-sm">
-                        <span className="text-xs text-green-600 font-bold block mb-1">교육 가능 수준</span>
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-blue-100 shadow-sm">
+                        <span className="text-xs text-blue-600 font-bold block mb-1">교육 가능 수준</span>
                         <span className="text-slate-800 font-semibold text-[15px]">{detailData.can_teach_difficulty}</span>
                       </div>
                     </div>
-                    <div className="bg-white p-4 rounded-lg border border-green-100 shadow-sm min-h-[80px]">
-                      <span className="text-xs text-green-600 font-bold block mb-2">어떤 도움을 줄 수 있나요?</span>
+                    <div className="bg-white p-4 rounded-lg border border-blue-100 shadow-sm min-h-[80px]">
+                      <span className="text-xs text-blue-600 font-bold block mb-2">어떤 도움을 줄 수 있나요?</span>
                       <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{detailData.can_teach_message}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4 pt-4">
-                  <div className="flex items-center gap-2 mb-2 border-b border-orange-500/20 pb-2">
-                    <BookOpen className="w-5 h-5 text-orange-600" />
-                    <h3 className="text-lg text-orange-700 font-bold">내가 배우고 싶어요</h3>
+                  <div className="flex items-center gap-2 mb-2 border-b border-yellow-500/20 pb-2">
+                    <BookOpen className="w-5 h-5 text-yellow-600" />
+                    <h3 className="text-lg text-yellow-700 font-bold">내가 배우고 싶어요</h3>
                   </div>
-                  <div className="bg-orange-50/50 p-4 rounded-xl space-y-3">
+                  <div className="bg-yellow-50/50 p-4 rounded-xl space-y-3">
                     <div className="flex flex-col sm:flex-row gap-4">
-                      <div className="flex-1 bg-white p-3 rounded-lg border border-orange-100 shadow-sm">
-                        <span className="text-xs text-orange-600 font-bold block mb-1">재능 분야</span>
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-yellow-100 shadow-sm">
+                        <span className="text-xs text-yellow-600 font-bold block mb-1">재능 분야</span>
                         <span className="text-slate-800 font-semibold text-[15px]">{detailData.want_to_skill}</span>
                       </div>
-                      <div className="flex-1 bg-white p-3 rounded-lg border border-orange-100 shadow-sm">
-                        <span className="text-xs text-orange-600 font-bold block mb-1">배우고 싶은 수준</span>
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-yellow-100 shadow-sm">
+                        <span className="text-xs text-yellow-600 font-bold block mb-1">배우고 싶은 수준</span>
                         <span className="text-slate-800 font-semibold text-[15px]">{detailData.want_to_difficulty}</span>
                       </div>
                     </div>
-                    <div className="bg-white p-4 rounded-lg border border-orange-100 shadow-sm min-h-[80px]">
-                      <span className="text-xs text-orange-600 font-bold block mb-2">무엇을 배우고 싶나요?</span>
+                    <div className="bg-white p-4 rounded-lg border border-yellow-100 shadow-sm min-h-[80px]">
+                      <span className="text-xs text-yellow-600 font-bold block mb-2">무엇을 배우고 싶나요?</span>
                       <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{detailData.want_to_message}</p>
                     </div>
                   </div>
