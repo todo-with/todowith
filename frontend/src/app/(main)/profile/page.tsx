@@ -70,8 +70,12 @@ export default function ProfilePage() {
         <div className="md:col-span-1 space-y-6">
           <Card className="border-none shadow-sm bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden">
             <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
-              <div className="w-24 h-24 bg-white/10 rounded-3xl flex items-center justify-center backdrop-blur-sm border border-white/20">
-                <UserIcon className="w-12 h-12 text-blue-400" />
+              <div className="w-24 h-24 bg-white/10 rounded-3xl flex items-center justify-center backdrop-blur-sm border border-white/20 overflow-hidden">
+                <img 
+                  src="/duck_profile.png" 
+                  alt="Profile" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               
               {isEditing ? (
@@ -145,8 +149,8 @@ export default function ProfilePage() {
         {/* Right: Skill Management Card */}
         <div className="md:col-span-2 space-y-6">
           {/* Currently Teaching */}
-          <Card className="border-slate-100 shadow-sm overflow-hidden mb-6">
-            <CardHeader className="bg-slate-50 border-b border-slate-100 py-4 flex flex-row items-center justify-between">
+          <Card className="border-slate-200/60 shadow-sm overflow-hidden mb-6 bg-slate-50 py-0 gap-0">
+            <CardHeader className="py-5 px-6 border-b border-slate-200/60 flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-blue-600" />
                 가르칠 수 있는 재능
@@ -171,8 +175,8 @@ export default function ProfilePage() {
           </Card>
 
           {/* Currently Learning */}
-          <Card className="border-slate-100 shadow-sm overflow-hidden mb-6">
-            <CardHeader className="bg-slate-50 border-b border-slate-100 py-4 flex flex-row items-center justify-between">
+          <Card className="border-slate-200/60 shadow-sm overflow-hidden mb-6 bg-slate-50 py-0 gap-0">
+            <CardHeader className="py-5 px-6 border-b border-slate-200/60 flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-orange-500" />
                 배우고 싶은 재능
@@ -198,7 +202,7 @@ export default function ProfilePage() {
 
           <div className="flex justify-end">
             <Link href="/profile/skills">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 gap-2 font-bold shadow-sm">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-10 h-14 gap-2 font-bold shadow-md text-lg">
                 스킬 관리 페이지 가기
               </Button>
             </Link>

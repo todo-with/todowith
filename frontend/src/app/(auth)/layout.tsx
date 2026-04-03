@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function AuthLayout({
   children,
 }: {
@@ -6,12 +8,17 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl text-white font-bold text-xl mb-4">
-            T
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900">TODO 재능 교환 플랫폼</h1>
-          <p className="text-slate-500 mt-2">서로의 재능을 교환하는 놀라운 경험</p>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <Image
+            src="/logo.png"
+            alt="ToDoWith Logo"
+            width={180}
+            height={80}
+            className="h-20 w-auto object-contain mb-4"
+            priority
+          />
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">ToDoWith</h1>
+          <p className="text-slate-500 mt-2 font-medium">나와 메이트를 위한 완벽한 재능 교환 플랫폼</p>
         </div>
         {children}
       </div>

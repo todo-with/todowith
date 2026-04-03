@@ -170,12 +170,18 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
           isSystem: true
         }])
       } else if (data.type === "REPLY_MATCHING") {
+        // 매칭 응답(수락/거절) 수신 시 모든 관련 데이터 갱신
         queryClient.invalidateQueries({queryKey: ['matchingRequests']});
         queryClient.invalidateQueries({queryKey: ['chatRooms']});
+        
+        if (data.accept && data.matching_id) {
+           queryClient.invalidateQueries({queryKey: ['matchings', data.matching_id]});
+        }
+
         setMessages(prev => [...prev, {
           message_id: Date.now().toString() + Math.random(),
           sender_name: "System",
-          content: data.accept ? "매칭이 성사되었습니다! 이제TODO를 만들어 공부를 시작해보세요." : "매칭 요청이 거절되었습니다.",
+          content: data.accept ? "매칭이 성사되었습니다! 이제 TODO를 만들어 공부를 시작해보세요." : "매칭 요청이 거절되었습니다.",
           timestamp: new Date().toISOString(),
           isSystem: true
         }])
@@ -462,7 +468,7 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
         <div className="p-4 bg-white border-t border-slate-200 shrink-0 z-10">
           <form onSubmit={handleSend} className="relative flex items-center bg-slate-100 rounded-xl p-1">
             <Input 
-              className="flex-1 border-none bg-transparent h-10 focus-visible:ring-0 px-4 text-slate-700" 
+              className="flex-1 border-none bg-transparent h-10 focus-visible:ring-0 px-4 text-slate-700 font-medium" 
               placeholder={isConnected ? "메시지를 입력하세요..." : "연결 중..."}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
@@ -471,9 +477,13 @@ export default function ChatRoomPage({ params }: { params: Promise<{ roomId: str
             <button 
               type="submit"
               disabled={!isConnected || !inputValue.trim()}
-              className="w-10 h-10 shrink-0 bg-yellow-400 text-yellow-900 rounded-lg flex items-center justify-center hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative w-14 h-10 shrink-0 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed group mr-1 overflow-visible"
             >
-              <Send className="w-4 h-4 ml-0.5" />
+              <img 
+                src="/duck.gif" 
+                alt="Send" 
+                className={`absolute w-18 h-18 object-contain transition-all duration-300 ${inputValue.trim() ? 'grayscale-0 bounce-type scale-110' : 'grayscale opacity-40 scale-90'}`}
+              />
             </button>
           </form>
         </div>

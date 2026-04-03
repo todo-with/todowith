@@ -135,8 +135,9 @@ async def accept_matching(
 
         validated_result = WSReplyMatchingMessage.model_validate(result)
         payload = validated_result.model_dump(mode="json", exclude_none=True)
-        await publisher.publish(user_event(str(payload["user_id"])), payload)
-        await publisher.publish(user_event(str(payload["to_user_id"])), payload)
+        # 보낸 사람과 받는 사람 모두에게 매칭 결과 알림
+        await publisher.publish(user_event(str(validated_result.user_id)), payload)
+        await publisher.publish(user_event(str(validated_result.to_user_id)), payload)
     else:
         is_deleted, result = service.reject_matching_request(
             db=db,
@@ -150,8 +151,9 @@ async def accept_matching(
             )
         validated_result = WSReplyMatchingMessage.model_validate(result)
         payload = validated_result.model_dump(mode="json", exclude_none=True)
-        await publisher.publish(user_event(str(payload["user_id"])), payload)
-        await publisher.publish(user_event(str(payload["to_user_id"])), payload)
+        # 보낸 사람과 받는 사람 모두에게 매칭 거절 알림
+        await publisher.publish(user_event(str(validated_result.user_id)), payload)
+        await publisher.publish(user_event(str(validated_result.to_user_id)), payload)
     return
 
 
