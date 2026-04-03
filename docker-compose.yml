@@ -16,14 +16,14 @@ services:
 
   # 2. Frontend (Next.js)
   frontend:
-    build:
-      context: ./frontend
+    image: xihxxn/todowith-frontend:latest
+    container_name: todowith-frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
+    # volumes:
+    #   - ./frontend:/app
+    #   - /app/node_modules
+    #   - /app/.next
     environment:
       - NODE_ENV=development
     networks:
@@ -31,12 +31,11 @@ services:
 
   # 3. Backend Core (FastAPI via uv)
   backend:
-    build:
-      image: xihxxn/todowith-backend:latest
-      container_name: todowith-backend
-    volumes:
-      - .:/app
-    command: uv run uvicorn app.app:app --host 0.0.0.0 --port 8000 --workers 4
+    image: xihxxn/todowith-backend:latest
+    container_name: todowith-backend
+    # volumes:
+    #   - .:/app
+    command: uv run uvicorn app.app:app --host 0.0.0.0 --port 8000 --workers 2
     
     env_file:
       - ./.env.secret
