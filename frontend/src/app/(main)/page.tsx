@@ -31,10 +31,16 @@ function MateCard({ mate }: { mate: any }) {
           <div className="font-semibold">{mate.name} (상대: {opponentName})</div>
           <div className="text-sm font-medium text-slate-600">{progress}%</div>
         </div>
-        <div className="text-xs text-slate-500 flex items-center gap-1">
-          {mate.teaching_skill}
-          <span className="text-blue-500">↔</span>
-          {mate.learning_skill}
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-blue-500 uppercase">가르침</span>
+            <span className="text-sm font-semibold text-slate-700">{mate.teaching_skill}</span>
+          </div>
+          <div className="h-4 w-px bg-slate-200 mt-2 mx-1" />
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-green-500 uppercase">배움</span>
+            <span className="text-sm font-semibold text-slate-700">{mate.learning_skill}</span>
+          </div>
         </div>
         <Progress value={progress} className="h-2 bg-slate-100" />
       </div>

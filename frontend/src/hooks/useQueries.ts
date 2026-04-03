@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import type { UserProfile } from '@/types/user';
 
@@ -11,6 +11,20 @@ export const useUserProfile = () => {
       return data;
     },
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+// User Mutations
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { name?: string; description?: string }) => {
+      const { data } = await api.patch('/user/me', payload);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
   });
 };
 
@@ -36,6 +50,21 @@ export const useMatchingDetail = (matchingId: string | null) => {
     },
     enabled: !!matchingId,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useUpdateMatching = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ matchingId, payload }: { matchingId: string; payload: { name?: string; status?: string } }) => {
+      const { data } = await api.patch(`/matching/${matchingId}`, payload);
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['matchingDetail', variables.matchingId] });
+      queryClient.invalidateQueries({ queryKey: ['myMatchings'] });
+      queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
+    },
   });
 };
 
@@ -87,6 +116,105 @@ export const useOpponentTasks = (matchingId: string | null) => {
     staleTime: 1 * 60 * 1000,
   });
 };
+
+export const useGeneratedTodos = (chatroomId: string | null) => {
+  return useQuery({
+    queryKey: ['generatedTodos', chatroomId],
+    queryFn: async () => {
+      if (!chatroomId) return null;
+      const { data } = await api.get('/todo/generated_todo', { params: { chatroom_id: chatroomId } });
+      return data;
+    },
+    enabled: !!chatroomId,
+    staleTime: 0,
+  });
+};
+
+// Todo Mutations
+export const useCreateTodo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (newTodo: { matching_id: string; user_id: string; name: string; skill: string }) => {
+      const { data } = await api.post('/todo', newTodo);
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['myTasks'] });
+      queryClient.invalidateQueries({ queryKey: ['opponentTasks', variables.matching_id] });
+    },
+  });
+};
+
+export const useUpdateTodo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ taskId, isCompleted }: { taskId: string; isCompleted: boolean }) => {
+      const { data } = await api.patch(`/todo/${taskId}`, { is_completed: isCompleted });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myTasks'] });
+      // To invalidate opponent tasks properly we'd need matching_id, but we can just invalidate all or depend on specific refetches
+      queryClient.invalidateQueries({ queryKey: ['opponentTasks'] });
+    },
+  });
+};
+
+export const useDeleteTodo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (taskId: string) => {
+      const { data } = await api.delete(`/todo/${taskId}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myTasks'] });
+      queryClient.invalidateQueries({ queryKey: ['opponentTasks'] });
+    },
+  });
+};
+
+export const useCreateGeneratedTodo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (roomId: string) => {
+      const { data } = await api.post('/todo/generated_todo', { room_id: roomId });
+      return data;
+    },
+    onSuccess: (_, roomId) => {
+      queryClient.invalidateQueries({ queryKey: ['generatedTodos', roomId] });
+    },
+  });
+};
+
+export const useDeleteGeneratedTodo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ candidateId, roomId }: { candidateId: string; roomId: string }) => {
+      const { data } = await api.delete(`/todo/generated_todo/${candidateId}`);
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['generatedTodos', variables.roomId] });
+    },
+  });
+};
+
+export const useSelectCandidateTodo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ targetId, roomId, targetUserId }: { targetId: string; roomId: string; targetUserId?: string }) => {
+      const { data } = await api.post(`/todo/${targetId}/select`, { user_id: targetUserId });
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['myTasks'] });
+      queryClient.invalidateQueries({ queryKey: ['opponentTasks'] });
+      queryClient.invalidateQueries({ queryKey: ['generatedTodos', variables.roomId] });
+    },
+  });
+};
+
 
 // Announcements
 export const useAnnouncements = (keyword?: string) => {
