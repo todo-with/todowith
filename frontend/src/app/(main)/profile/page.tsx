@@ -53,6 +53,15 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-bold">{userProfile?.name}</h2>
                 <p className="text-slate-400 text-sm">{userProfile?.email}</p>
               </div>
+
+              {userProfile?.description && (
+                <div className="w-full pt-6 border-t border-white/10 mt-2">
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">자기소개</p>
+                  <p className="text-sm text-slate-200 bg-white/5 p-4 rounded-xl border border-white/5 leading-relaxed text-left italic">
+                    "{userProfile.description}"
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

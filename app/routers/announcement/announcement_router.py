@@ -57,6 +57,20 @@ def get_announcement_detail(
     return res
 
 
+@router.get("/my", response_model=List[ViewDetailAnnounceResponse])
+def get_my_announcements(
+    db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user_id),
+    service: AnnouncementService = Depends(get_announcement_service),
+) -> List[ViewDetailAnnounceResponse]:
+    logger = logging.getLogger("__main__")
+    try:
+        return service.get_my_announcements(db, user_id)
+    except Exception as e:
+        logger.error(str(e))
+        raise HTTPException(status_code=500, detail="Failed to get my announcements")
+
+
 @router.post("")
 def create_announcement(
     create_announcement_request: CreateAnnounceRequest,

@@ -26,6 +26,31 @@ export const useMyMatchings = () => {
   });
 };
 
+export const useMatchingDetail = (matchingId: string | null) => {
+  return useQuery({
+    queryKey: ['matchingDetail', matchingId],
+    queryFn: async () => {
+      if (!matchingId) return null;
+      const { data } = await api.get(`/matching/${matchingId}`);
+      return data;
+    },
+    enabled: !!matchingId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useMatchingRequests = () => {
+  return useQuery({
+    queryKey: ['matchingRequests'],
+    queryFn: async () => {
+      const { data } = await api.get('/matching/requests');
+      return data;
+    },
+    staleTime: 1 * 60 * 1000,
+  });
+};
+
+
 // My Skills (Profile Skills)
 export const useAllSkills = () => {
   return useQuery({
@@ -73,6 +98,30 @@ export const useAnnouncements = (keyword?: string) => {
       });
       return data;
     },
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useMyAnnouncements = () => {
+  return useQuery({
+    queryKey: ['myAnnouncements'],
+    queryFn: async () => {
+      const { data } = await api.get('/announcement/my');
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useAnnouncementDetail = (id: string | null) => {
+  return useQuery({
+    queryKey: ['announcementDetail', id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data } = await api.get(`/announcement/detail/${id}`);
+      return data;
+    },
+    enabled: !!id,
     staleTime: 5 * 60 * 1000,
   });
 };
