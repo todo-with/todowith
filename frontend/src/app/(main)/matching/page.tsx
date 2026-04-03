@@ -5,8 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Heart, MessageSquare, Search } from "lucide-react"
-import { useAnnouncements, useAllSkills } from "@/hooks/useQueries"
+import { Heart, MessageSquare, Search, BookOpen, PenTool, User as UserIcon } from "lucide-react"
+import { useAnnouncements, useAllSkills, useMyAnnouncements, useAnnouncementDetail } from "@/hooks/useQueries"
 import { useUserProfileContext } from "@/context/UserProfileContext"
 import api from "@/lib/api"
 import { useRouter } from "next/navigation"
@@ -29,12 +29,17 @@ export default function MatchingPage() {
   const { data: userProfile } = useUserProfileContext()
   const { data: mySkills, isLoading: skillsLoading } = useAllSkills()
   const { data: announcements, isLoading } = useAnnouncements(searchTerm)
+  const { data: myAnnouncements, isLoading: isMyLoading } = useMyAnnouncements()
   const [creating, setCreating] = useState<string | null>(null)
   
   // Create/Edit Announcement State
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  // Detail View State
+  const [detailId, setDetailId] = useState<string | null>(null)
+  const { data: detailData, isLoading: detailLoading } = useAnnouncementDetail(detailId)
   const [formData, setFormData] = useState({
     want_to_skill: "",
     can_teach_skill: "",
@@ -111,6 +116,7 @@ export default function MatchingPage() {
         await api.post('/announcement', formData)
       }
       await queryClient.invalidateQueries({ queryKey: ['announcements'] })
+      await queryClient.invalidateQueries({ queryKey: ['myAnnouncements'] })
       setIsDialogOpen(false)
     } catch (e) {
       console.error(e)
@@ -157,10 +163,11 @@ export default function MatchingPage() {
       </div>
 
       <Tabs defaultValue="recommended" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 h-12 bg-slate-100 rounded-xl p-1 mb-6">
+        <TabsList className="grid w-full grid-cols-4 h-12 bg-slate-100 rounded-xl p-1 mb-6">
           <TabsTrigger value="recommended" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">추천 공고</TabsTrigger>
           <TabsTrigger value="teach" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">가르칠 재능</TabsTrigger>
           <TabsTrigger value="learn" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">배우고 싶은 재능</TabsTrigger>
+          <TabsTrigger value="my" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm font-semibold text-blue-600">내 공고</TabsTrigger>
         </TabsList>
 
         <TabsContent value="recommended" className="space-y-4 outline-none">
@@ -171,16 +178,19 @@ export default function MatchingPage() {
           ) : (
             matches.map((match: any) => (
               <Card key={match.id} className="border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex justify-between">
-                    <div className="flex gap-4">
+                <CardContent className="p-0">
+                  <div className="flex justify-between p-6">
+                    <div 
+                      className="flex gap-4 cursor-pointer flex-1"
+                      onClick={() => setDetailId(match.id)}
+                    >
                       <Avatar className="w-16 h-16">
                         <AvatarFallback className="text-lg bg-blue-100 text-blue-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
                       </Avatar>
 
                       <div className="space-y-2 flex flex-col justify-center">
                         <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold">{match.username}</span>
+                          <span className="text-lg font-bold hover:underline decoration-blue-500">{match.username}</span>
                         </div>
 
                         <div className="text-sm space-y-1 text-slate-700">
@@ -236,21 +246,24 @@ export default function MatchingPage() {
               .filter((m: any) => userProfile?.can_teach_skills.includes(m.want_to_skill))
               .map((match: any) => (
                 <Card key={match.id} className="border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between">
-                      <div className="flex gap-4">
+                  <CardContent className="p-0">
+                    <div className="flex justify-between p-6">
+                      <div 
+                        className="flex gap-4 cursor-pointer flex-1"
+                        onClick={() => setDetailId(match.id)}
+                      >
                         <Avatar className="w-16 h-16">
                           <AvatarFallback className="text-lg bg-green-100 text-green-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
                         </Avatar>
                         <div className="space-y-2 flex flex-col justify-center">
-                          <div className="font-bold text-lg">{match.username}</div>
+                          <div className="font-bold text-lg hover:underline decoration-green-500">{match.username}</div>
                           <div className="text-sm space-y-1 text-slate-700">
                             <div><span className="text-slate-500 mr-2">가르칠 수 있어요:</span>{match.can_teach_skill}</div>
                             <div><span className="text-slate-500 mr-2 text-green-600 font-semibold">배우고 싶어요:</span>{match.want_to_skill}</div>
                           </div>
                         </div>
                       </div>
-                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full">메시지 보내기</Button>
+                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full mt-2">메시지 보내기</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -272,40 +285,86 @@ export default function MatchingPage() {
               .filter((m: any) => userProfile?.want_to_skills.includes(m.can_teach_skill))
               .map((match: any) => (
                 <Card key={match.id} className="border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between">
-                      <div className="flex gap-4">
+                  <CardContent className="p-0">
+                    <div className="flex justify-between p-6">
+                      <div 
+                        className="flex gap-4 cursor-pointer flex-1"
+                        onClick={() => setDetailId(match.id)}
+                      >
                         <Avatar className="w-16 h-16">
                           <AvatarFallback className="text-lg bg-orange-100 text-orange-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
                         </Avatar>
                         <div className="space-y-2 flex flex-col justify-center">
-                          <div className="font-bold text-lg">{match.username}</div>
+                          <div className="font-bold text-lg hover:underline decoration-orange-500">{match.username}</div>
                           <div className="text-sm space-y-1 text-slate-700">
                             <div><span className="text-slate-500 mr-2 text-orange-600 font-semibold">가르칠 수 있어요:</span>{match.can_teach_skill}</div>
                             <div><span className="text-slate-500 mr-2">배우고 싶어요:</span>{match.want_to_skill}</div>
                           </div>
                         </div>
                       </div>
-                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full">메시지 보내기</Button>
+                      <Button onClick={() => handleSendMessage(match.id, match.username)} className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold rounded-full mt-2">메시지 보내기</Button>
                     </div>
                   </CardContent>
                 </Card>
               ))
           )}
         </TabsContent>
+
+        <TabsContent value="my" className="space-y-4 outline-none">
+          {isMyLoading ? (
+            <div className="text-center py-10 text-slate-500">내 공고를 불러오는 중...</div>
+          ) : !myAnnouncements || myAnnouncements.length === 0 ? (
+            <div className="text-center py-10 text-slate-500">내가 올린 공고가 없습니다. 우측 상단의 '공고 등록하기'를 눌러보세요!</div>
+          ) : (
+            myAnnouncements.map((match: any) => (
+              <Card key={match.id} className="border-blue-100 bg-blue-50/20 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <CardContent className="p-0">
+                  <div className="flex justify-between p-6">
+                    <div 
+                      className="flex gap-4 cursor-pointer flex-1"
+                      onClick={() => setDetailId(match.id)}
+                    >
+                      <Avatar className="w-16 h-16 border-2 border-blue-200">
+                        <AvatarFallback className="text-lg bg-white text-blue-600 font-bold">{match.username?.[0] || "?"}</AvatarFallback>
+                      </Avatar>
+                      <div className="space-y-2 flex flex-col justify-center">
+                        <div className="font-bold text-lg text-slate-900 hover:underline decoration-blue-500">{match.username} <span className="text-xs font-normal text-blue-600 ml-2 bg-blue-100 px-2 py-0.5 rounded-full">나의 공고</span></div>
+                        <div className="text-sm space-y-1 text-slate-700">
+                          <div><span className="text-slate-500 mr-2">가르칠 내용:</span><span className="font-medium text-slate-800">{match.can_teach_skill}</span></div>
+                          <div><span className="text-slate-500 mr-2">배우고 싶은 점:</span><span className="font-medium text-slate-800">{match.want_to_skill}</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Button 
+                        variant="default"
+                        onClick={() => openEditModal(match.id)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2 pl-4 pr-5 rounded-full shadow-sm"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        수정하기
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
       </Tabs>
 
       {/* Announcement Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl bg-white p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+        <DialogContent className="max-w-4xl w-11/12 bg-white p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
           <form onSubmit={handleSubmit}>
             <DialogHeader className="p-6 bg-slate-900 text-white">
               <DialogTitle className="text-xl">{editingId ? "공고 수정하기" : "새로운 재능 교환 공고 등록"}</DialogTitle>
             </DialogHeader>
             
-            <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div className="p-6 sm:p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+              {/* Form implementation content ... */}
               {/* Skills Grid */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-slate-700">가르칠 수 있는 재능</Label>
                   <select
@@ -366,7 +425,7 @@ export default function MatchingPage() {
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-slate-700">재능 나눔 메시지 (가르칠 내용)</Label>
                   <textarea 
-                    className="w-full h-32 p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-sm"
+                    className="w-full h-24 p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-sm"
                     placeholder="상대방에게 가르쳐줄 수 있는 내용을 상세히 적어주세요."
                     value={formData.can_teach_message}
                     onChange={(e) => setFormData({...formData, can_teach_message: e.target.value})}
@@ -377,7 +436,7 @@ export default function MatchingPage() {
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-slate-700">배우고 싶은 점 (요청 사항)</Label>
                   <textarea 
-                    className="w-full h-32 p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-sm"
+                    className="w-full h-24 p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-sm"
                     placeholder="상대방으로부터 배우고 싶은 점을 자유롭게 적어주세요."
                     value={formData.want_to_message}
                     onChange={(e) => setFormData({...formData, want_to_message: e.target.value})}
@@ -387,7 +446,7 @@ export default function MatchingPage() {
               </div>
             </div>
 
-            <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100">
+            <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100 flex flex-row justify-end space-x-2">
               <Button 
                 type="button" 
                 variant="ghost" 
@@ -405,6 +464,95 @@ export default function MatchingPage() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Detail View Dialog */}
+      <Dialog open={!!detailId} onOpenChange={(o) => (!o && setDetailId(null))}>
+        <DialogContent className="max-w-xl w-11/12 bg-white p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+          {detailLoading ? (
+             <div className="p-12 text-center text-slate-500">공고의 상세 정보를 불러오는 중입니다...</div>
+          ) : detailData ? (
+            <>
+              <DialogHeader className="p-6 pb-4 border-b border-slate-100 bg-slate-50/50">
+                <div className="flex items-center gap-4">
+                  <Avatar className="w-14 h-14 border border-white shadow-sm">
+                    <AvatarFallback className="bg-blue-100 text-blue-700 font-bold text-xl">{detailData.username?.[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col text-left">
+                    <DialogTitle className="text-xl text-slate-900">{detailData.username}님의 공고</DialogTitle>
+                    <p className="text-sm text-slate-500 mt-1">이 사용자와의 소소한 재능 교환</p>
+                  </div>
+                </div>
+              </DialogHeader>
+
+              <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-2 border-b border-green-500/20 pb-2">
+                    <PenTool className="w-5 h-5 text-green-600" />
+                    <h3 className="text-lg text-green-700 font-bold">내가 가르쳐 줄게요</h3>
+                  </div>
+                  <div className="bg-green-50/50 p-4 rounded-xl space-y-3">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-green-100 shadow-sm">
+                        <span className="text-xs text-green-600 font-bold block mb-1">재능 분야</span>
+                        <span className="text-slate-800 font-semibold text-[15px]">{detailData.can_teach_skill}</span>
+                      </div>
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-green-100 shadow-sm">
+                        <span className="text-xs text-green-600 font-bold block mb-1">교육 가능 수준</span>
+                        <span className="text-slate-800 font-semibold text-[15px]">{detailData.can_teach_difficulty}</span>
+                      </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border border-green-100 shadow-sm min-h-[80px]">
+                      <span className="text-xs text-green-600 font-bold block mb-2">어떤 도움을 줄 수 있나요?</span>
+                      <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{detailData.can_teach_message}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4 pt-4">
+                  <div className="flex items-center gap-2 mb-2 border-b border-orange-500/20 pb-2">
+                    <BookOpen className="w-5 h-5 text-orange-600" />
+                    <h3 className="text-lg text-orange-700 font-bold">내가 배우고 싶어요</h3>
+                  </div>
+                  <div className="bg-orange-50/50 p-4 rounded-xl space-y-3">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-orange-100 shadow-sm">
+                        <span className="text-xs text-orange-600 font-bold block mb-1">재능 분야</span>
+                        <span className="text-slate-800 font-semibold text-[15px]">{detailData.want_to_skill}</span>
+                      </div>
+                      <div className="flex-1 bg-white p-3 rounded-lg border border-orange-100 shadow-sm">
+                        <span className="text-xs text-orange-600 font-bold block mb-1">배우고 싶은 수준</span>
+                        <span className="text-slate-800 font-semibold text-[15px]">{detailData.want_to_difficulty}</span>
+                      </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border border-orange-100 shadow-sm min-h-[80px]">
+                      <span className="text-xs text-orange-600 font-bold block mb-2">무엇을 배우고 싶나요?</span>
+                      <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{detailData.want_to_message}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100">
+                {detailData.user_id !== userProfile?.id && (
+                  <Button
+                    onClick={() => {
+                        setDetailId(null)
+                        handleSendMessage(detailData.id, detailData.username)
+                    }}
+                    disabled={creating === detailData.id}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold py-6 text-base rounded-xl shadow-sm"
+                  >
+                    <MessageSquare className="w-5 h-5 mr-2 fill-current" />
+                    {creating === detailData.id ? "메시지 방 생성 중..." : "용기내서 메시지 보내기"}
+                  </Button>
+                )}
+              </DialogFooter>
+            </>
+          ) : (
+            <div className="p-12 text-center text-red-500">정보를 불러올 수 없습니다.</div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

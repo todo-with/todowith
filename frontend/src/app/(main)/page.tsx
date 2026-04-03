@@ -3,16 +3,18 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import Link from "next/link"
-import { useMyTasks, useMyMatchings, useOpponentTasks } from "@/hooks/useQueries"
+import { useMatchingDetail, useMyTasks, useMyMatchings, useOpponentTasks } from "@/hooks/useQueries"
 
 function MateCard({ mate }: { mate: any }) {
   const { data } = useOpponentTasks(mate.matching_id)
+  const { data: matchingDetail } = useMatchingDetail(mate.matching_id)
   const items = data?.items || []
   const total = items.length
   const completed = items.filter((i: any) => i.is_completed).length
   const progress = total === 0 ? 0 : Math.round((completed / total) * 100)
+  const opponentName = matchingDetail?.opponent_name || "매칭상대"
 
   // Skip rendering if not ACTIVATE
   if (mate.status !== "ACTIVATE" && mate.status !== "ACTIVE") return null
@@ -21,12 +23,12 @@ function MateCard({ mate }: { mate: any }) {
     <div className="flex items-center gap-4">
       <Avatar className="w-12 h-12">
         <AvatarFallback className="bg-slate-100 font-bold text-slate-500">
-          {mate.name?.[0] || "?"}
+          {opponentName?.[0] || "?"}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1 space-y-1">
         <div className="flex justify-between items-center">
-          <div className="font-semibold">{mate.name} (상대: {mate.opponent_name || "매칭상대"})</div>
+          <div className="font-semibold">{mate.name} (상대: {opponentName})</div>
           <div className="text-sm font-medium text-slate-600">{progress}%</div>
         </div>
         <div className="text-xs text-slate-500 flex items-center gap-1">

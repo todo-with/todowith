@@ -82,6 +82,34 @@ class AnnouncementService:
             can_teach_difficulty=announcement.can_teach_difficulty,
         )
 
+    def get_my_announcements(
+        self, db: Session, user_id: UUID
+    ) -> list[ViewDetailAnnounceResponse]:
+        res = self.repo.get_my_details(db, user_id)
+        if not res:
+            return []
+
+        announcements: list[ViewDetailAnnounceResponse] = []
+        for announcement, want_to, can_teach, username in res:
+            if want_to is None or can_teach is None:
+                continue
+
+            announcements.append(
+                ViewDetailAnnounceResponse(
+                    id=str(announcement.id),
+                    username=username,
+                    user_id=str(announcement.user_id),
+                    want_to_skill=want_to,
+                    can_teach_skill=can_teach,
+                    want_to_message=announcement.want_to_message,
+                    can_teach_message=announcement.can_teach_message,
+                    want_to_difficulty=announcement.want_to_difficulty,
+                    can_teach_difficulty=announcement.can_teach_difficulty,
+                )
+            )
+
+        return announcements
+
     def update_announcement(
         self,
         db: Session,

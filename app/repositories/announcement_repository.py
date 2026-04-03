@@ -87,6 +87,26 @@ class AnnouncementRepository:
 
         return result  # type: ignore
 
+    def get_my_details(
+        self, db: Session, user_id: UUID
+    ) -> list[Row[tuple[Announcement, str | None, str | None, str]]]:
+        want_skill = aliased(Skill)
+        teach_skill = aliased(Skill)
+
+        return (
+            db.query(
+                Announcement,
+                want_skill.name.label("want_to_skill_name"),
+                teach_skill.name.label("can_teach_name"),
+                User.name.label("user_name"),
+            )
+            .filter(Announcement.user_id == user_id)
+            .outerjoin(want_skill, Announcement.want_to_skill == want_skill.id)
+            .outerjoin(teach_skill, Announcement.can_teach_skill == teach_skill.id)
+            .join(User, User.id == Announcement.user_id)
+            .all()
+        )
+
     def get_by_id(self, db: Session, announcement_id: UUID) -> Announcement | None:
         result = (
             db.query(Announcement).filter(Announcement.id == announcement_id).first()
