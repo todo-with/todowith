@@ -15,3 +15,4 @@ class SearchUserProfileResponse(BaseModel):
     email: str
     can_teach_skills: List[str]
     want_to_skills: List[str]
+    description: Optional[str] = None

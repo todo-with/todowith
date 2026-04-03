@@ -1,0 +1,305 @@
+도메인,기능 설명,담당자,method,endpoint,query parameter,path parameter,request model,response model,구현 여부
+Auth,"유저 등록하는 기능. 제일 처음에 아이디와 비번, 이메일 받아서 유저 등록 하는거임",정대균,POST,/autn/create_user,,,"{ ""email"":str ""password"": str, ""name"": str","{""message"": ""사용자가 성공적으로 생성되었습니다.""}",O
+Auth,인증 이메일 전송. 재전송이랑 겸함. 400번대 나오면 이메일이 잘못되었거나. 이미 가입이 된 사람임,정대균,GET,/auth/send_email,email,,,200,O
+Auth,이건 이메일 안에 포함되어있으니까 신경 ㄴㄴ,정대균,GET,/auth/verify_email,token (이메일 인증용 시크릿으로 따로 만든 토큰),,,html page,O
+Auth,로그인. 말 그대로임. 로그인,정대균,POST,/auth/login,,,"{
+    ""email"": str,
+    ""password"": str
+}","{
+  ""access_token"": str,
+  ""token_type"": ""bearer"",
+  ""expires_in"": int,
+}",O
+Skill,"배우고싶은 것 등록
+WantToLearn
+사용자가 가입 하고 초반에 배우고 싶은 기술을 등록하는 화면에서 쓰임
+전체 skill 조회 (all_available) 사용해서 스킬 목록 불러오고 (검색 기능도 겸함)
+선택하게 하면 됨",한준희,POST,/skill/want_to,,,"{
+    ""want_to_skill"": list [{""name"", ""category}],
+}",200,O
+Skill,"가르칠 수 있는 것 등록
+CanToTeach
+위에 있는 거랑 동일",한준희,POST,/skill/can_teach,,,"{
+    ""can_teach_skill"": list [{""name"", ""category}],
+}",200,O
+Skill,"전체 skill 조회 (사용자)
+ViewAllSkills
+이건 사용자가 배우고 싶거나 가르칠 수 있는 스킬을 종합적으로 보여주는 기능임",한준희,GET,/skill/all,,,,"
+    {
+     ""can_teach_skill"": list[{""name"", ""category}],
+     ""want_to_skill"": list[{""name"", ""category}],
+    }
+",O
+Skill,"배우려는 skill 조회
+ViewWantToLearn
+윗 기능의 subset",한준희,GET,/skill/want_to,,,,"
+    {
+     ""want_to_skill"": list[{""name"", ""category}],
+    }",O
+Skill,"가르칠 수 있는 Skill 조회
+ViewCanToTeach
+윗윗 기능의 subset",한준희,GET,/skill/can_teach,,,,"
+    {
+     ""can_teach_skill"": list[{""name"", ""category}],
+    }",O
+Skill,"배우고 싶은 스킬 수정
+EditWantToLearn
+patch형태로 요청에 실려간 리스트가 그대로 db에 반영됨",한준희,PATCH,/skill/want_to,,,"{
+    ""want_to_skill"": list [{""name"", ""category}],
+}",,O
+Skill,"가르칠 수 있는 스킬 수정
+EditCanToTeach
+위와 동일",한준희,PATCH,/skill/can_teach,,,"{
+    ""can_teach_skill"": list [{""name"", ""category}],
+}",,O
+Skill,"전체 skill 조회
+해당 서비스에서 사용할 수 있는 스킬을 전부 조회 가능",정대균,GET,/skill/all_available,keyword,,,"[ {""name"", ""category""}]",O
+Skill,"skill 추가
+사용자가 원할 경우 스킬을 추가할 수 있음.
+스킬 이름은 적게 하고, 카테고리는 아래 카테고리 조회에서 조회해서 그 안에서 고르게 할 것",정대균,POST,/skill,,,,"{""name"", ""category""}",O
+Skill,"category 목록 조회
+윗 항목 참조",정대균,GET,/skill/categories,,,,[ str ],O
+Matching,"내 매칭 리스트 조회
+ViewMyMatchingList
+내가 지금 하고있는 교환들 조회 (목록)",김재훈,GET,/matching/my,,,,"[
+    {
+    ""matching_id"":str
+     ""name"": str,
+    ""teaching_skill"": str,
+    ""learning_skill"": str,
+    ""status"": str
+    }
+]",ㅇ
+Matching,"매칭 상세 정보 조회
+ViewDetailMatchingList
+해당 목록에 있는 항목에서 클릭하면 상세정보를 보도록",김재훈,GET,/matching/{matching_id},,matching_id,,"{
+   ""opponent_name"": str,
+    ""teaching_skill"": str,
+    ""learning_skill"": str,
+    ""opponent_id: str
+}",ㅇ
+Matching,"매칭 요청 조회
+chat에서 발생한 매칭 요청을 별도의 알림창이나 채팅창 로딩 시 볼 수 있도록 하는 api",정대균,GET,/matching/requests,,,,"{
+    ""send"": [
+        {
+            ""matching_request_id"": str,
+            ""opponent_name"": str,
+            ""room_id"": str,
+        }
+    ],
+    ""receive"": [
+        {
+            ""matching_request_id"": str,
+            ""opponent_name"": str,
+            ""room_id"": str
+        }
+    ]
+}",O
+Matching,"교환 요청 수락/거절
+yes_no_request
+매칭 요청 조회에서 receive항목 중에 하나를 선택하면 그 id를 기반으로 accept, reject할 수 있음",정대균,POST,/matching/{matching_request_id}/accept,,matching_request_id,"{""accept"": bool}",,O
+Matching,"매칭 상태 변경
+매칭의 상태는 두 개임. 개인적으로 내가 가르치는 게 끝났는지, 이 매칭이 다 완료되었는지. 여기서 요청에 실어보내는 것은 내 개인적인 상태. 응답으로 오는 것은 그걸 설정함으로써 최신의 매칭 상태가 어떤지임",정대균,PATCH,/matching/{matching_id},,matching_id,"{
+    ""name"" : str,
+    ""status"": ""ACTIVATE"" | ""COMPLETED"",
+}","{
+    ""name"" : str,
+    ""matching_status"": bool
+}",ㅇ
+Chat,"채팅방 목록 조회
+SearchChatList
+말 그대로 채팅방 목록 조회
+matching_id는 null이 될 수 있으니 (매칭 안 된 경우) 해당 상태 인지할 것",정대균,GET,/chat/rooms,,,,"[
+    {
+        ""room_id"": uuid,
+        ""name"": str
+        ""opponent_name"": str,
+        ""last_message"": str,
+        ""updated_at"": str,
+        ""matching_id"": str,
+       ""announcement_id"": str
+    }
+]",O
+Chat,"채팅방 생성
+EnterChatRoom
+채팅방 생성하는 거임. 이름은 입력받으면 될듯",정대균,POST,/chat/room,,,"{""announcement_id"":  uuid, ""name"": str}","{""room_id"": str}",O
+Chat,"채팅 연결
+ConnectChat
+웹소켓 관련임. 유저 id가 필요할텐데, 그건 user도메인에 프로필 조회하는 거 있음",정대균,WS,/chat,token (only jwt),,"{
+    ""type"": ""JOIN_CHAT"",
+    ""room_id"": ""str(UUID)""
+} (무조건 이걸 날려야 이벤트를 받을 수 있음)|
+{
+    ""type"": ""SEND_MESSAGE"",
+    ""room_id"": ""str (UUID)"",
+    ""content"": str
+  } |   
+{
+    ""type"": ""REQUEST_MATCHING"",
+    ""room_id"": ""str (UUID)"",
+  } |","  {
+    ""type"": ""REQUEST_MATCHING | RECEIVE_MATCHING"", (요청을 날린 사람은 전자, 받은 사람은 후자)
+    ""user_id"": ""str (UUID)"",
+    ""to_user_id"": ""str (UUID) | null"",
+    ""room_id"": ""str (UUID)"",
+    ""matching_request_id"": ""str (UUID) | null""
+  } |
+  {
+    ""type"": ""REPLY_MATCHING"", (받으면 유저아이디랑 비교해서 내가 응답을 한 건지 아니면 받은 건지 판단)
+    ""user_id"": ""str (UUID)"",
+    ""to_user_id"": ""str (UUID) | null"",
+    ""matching_request_id"": ""str (UUID)"",
+    ""accept"": false
+  } (매치 신청에 거절했을 때) |
+  {
+    ""type"": ""REPLY_MATCHING"",
+    ""user_id"": ""str (UUID)"",
+    ""to_user_id"": ""str (UUID) | null"",
+    ""matching_id"": ""str (UUID)"",
+    ""accept"": true
+  } (매치 신청에 수락했을 때) ",O
+Chat,"채팅 내역 불러오기
+LoadChatList
+채팅방 입장하면 이걸 호출하기. 처음에는 쿼리 파라미터 없이 호출하고, 마지막 message_id를 기록해놨다가 그것 이전 대화를 조회하려고 하면 그걸 파라미터에 실어서 요청 날려서 받아올것 (페이지네이션)",정대균,GET,/chat/room/{room_id},last_message_id,room_id,,"[
+    {
+        ""sender_name"": ""이름2"",
+        ""content"": ""하이"",
+        ""timestamp"": ""2026-03-31T06:30:49.387804"",
+        ""read"": false,
+        ""message_id"": message_id
+    }
+]",O
+Todo,"Todo 생성
+CreateToDo
+todo를 생성하는데, user_id를 넣으면 그사람에게 할당됨
+매칭 상세정보 조회 쪽에 opponent_id 쓰면 될듯. 매칭 상세정보에서 ",안시현,POST,/todo,,,"{
+""matching_id"": str,
+""skill"": str,
+""name"": str,
+""user_id"": str
+}",,ㅇ
+Todo,"내 Todo 조회
+ViewMyToDo",안시현,GET,/todo/my-tasks,,,,"[
+     {
+           ""todo_id"": str, 
+           ""name"": str, 
+           ""skill"": str
+           ""is_completed"": bool
+           ""matching_name"": str,
+           ""matching_id"": str
+      }
+]",ㅇ
+Todo,"상대 Todo 조회
+ViewOpponentToDo",안시현,GET,/todo/{matching_id}/opponent-tasks,,matching_id,,"[
+     {
+           ""todo_id"": str, 
+           ""name"": str, 
+           ""skill"": str
+           ""is_completed"": bool
+      }
+]",ㅇ
+Todo,"Todo 업데이트
+UpdateToDo",안시현,PATCH,/todo/{todo_id},,,"{
+  ""name"": ""str"",
+  ""is_completed"": ""bool""
+}","{
+  ""todo_id"": ""str"",
+  ""name"": ""str"",
+  ""is_completed"": ""bool""
+}",ㅇ
+Todo,"todo 후보 생성
+CreateToDoCandidate
+채팅방 안에서 호출
+상대방이랑 매칭이 안 되어있으면 버튼 노출을 하지 말것
+",안시현,POST,/todo/generated_todo,,,"{
+    ""room_id"": str
+}","[
+    {
+        ""id"": str,
+        ""name"": str,
+        ""skill"": str
+    }
+]",ㅇ
+Todo,"todo 후보 조회
+ViewToDoCandidate
+생성된 후보 조회. ",안시현,GET,/todo/generated_todo,chatroom_id,,,"[
+    {
+        ""id"": str,
+        ""name"": str,
+        ""skill"": str
+    }
+]",ㅇ
+Todo,"todo 후보 채택
+SelectToDoCandidate
+이걸 누르면 일반 todo에 삽입됨. 그리고 생성된 todo가 지워지므로 다시 후보 조회를 호출해서 업데이트 하도록",안시현,POST,/todo,target_id (후보의 id),,,,
+Todo,todo 삭제,안시현,DELETE,/todo/{todo_id},,todo_id,,,ㅇ
+User,"유저 프로필 조회 
+SearchUserProfile",김재훈,GET,/user/profile,,,,"{
+""id"": str
+""name"": str,
+ ""email"": str,
+ ""can_teach_skills"": [str], 
+""want_to_skills"": [str]
+}",O
+User,"내 정보 수정
+EditMyProfile",김재훈,PATCH,/user/me,,,"{
+""name"": str,
+""description"": str
+}","{
+  ""name"": ""str"",
+  ""email"": ""str"",
+  ""can_teach_skills"": [""str""],
+  ""want_to_skills"": [""str""]
+}",O
+Announcement,"공고 조회
+ViewAnnounce
+각 id에 대응하는 채팅 만들기 버튼 만들것!!",정대균,GET,/announcement/all,,,,"[
+    {
+        ""id"": str
+        ""username"": str,
+        ""user_id"": str,
+        ""want_to_skill"": str,
+        ""can_teach_skill"": str
+    }
+]",O
+Announcement,"공고 상세 조회
+ViewDetailAnnounce",정대균,GET,/announcement/detail/{announcement_id},,announcement_id,,"{
+  ""id"": ""str"",
+  ""user_id"": ""str"",
+  ""username"": ""str"",
+  ""want_to_skill"": ""str"",
+  ""can_teach_skill"": ""str"",
+  ""want_to_message"": ""str"",
+  ""can_teach_message"": ""str"",
+  ""can_teach_difficulty"": ""str"",
+  ""want_to_difficulty"": ""str""
+}",O
+Announcement,"공고 등록
+CreateAnnounce",정대균,POST,/announcement,,,"{
+  ""want_to_skill"": ""str"",
+  ""can_teach_skill"": ""str"",
+  ""want_to_message"": ""str"",
+  ""can_teach_message"": ""str"",
+  ""can_teach_difficulty"": ""str"",
+  ""want_to_difficulty"": ""str""
+}","{
+    ""id"": str
+}",O
+Announcement,"공고 수정
+EditAnnounce",정대균,PATCH,/announcement/{announcement_id},,announcement_id,"{
+  ""want_to_skill"": ""str"",
+  ""can_teach_skill"": ""str"",
+  ""want_to_message"": ""str"",
+  ""can_teach_message"": ""str"",
+  ""can_teach_difficulty"": ""str"",
+  ""want_to_difficulty"": ""str""
+}","{
+  ""id"": ""str"",
+  ""user_id"": ""str"",
+  ""want_to_skill"": ""str"",
+  ""can_teach_skill"": ""str"",
+  ""want_to_message"": ""str"",
+  ""can_teach_message"": ""str"",
+  ""can_teach_difficulty"": ""str"",
+  ""want_to_difficulty"": ""str""
+}",O

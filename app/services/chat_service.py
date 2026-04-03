@@ -46,6 +46,7 @@ class ChatService:
             raise Exception("채팅 로그 생성 실패")
 
         event["chat_log_id"] = chat_log.id
+        event["timestamp"] = chat_log.timestamp.isoformat()
         return event
 
     def check_matching_is_exists(self, db: Session, room_id: UUID) -> bool:

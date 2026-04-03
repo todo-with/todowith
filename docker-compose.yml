@@ -9,21 +9,25 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      # - frontend
+      - frontend
       - backend
     networks:
       - app-network
 
-  # # 2. Frontend (React)
-  # frontend:
-  #   image: node:20-alpine
-  #   working_dir: /app
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules # 호스트의 node_modules 덮어쓰기 방지
-  #   command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3000"
-  #   networks:
-  #     - app-network
+  # 2. Frontend (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
 
   # 3. Backend Core (FastAPI via uv)
   backend:
@@ -69,6 +73,7 @@ services:
 volumes:
   pg_data:
   redis_data:
+
 
 networks:
   app-network:

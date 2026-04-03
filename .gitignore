@@ -15,3 +15,52 @@ AGENTS.md
 !.env.example
 
 .idea
+# ==========================================
+# 1. OS & IDE (Global)
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ==========================================
+# 2. General / Logs / Secrets (Global)
+# ==========================================
+*.pem
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+# 모든 디렉터리의 환경변수 파일 무시 (보안)
+**/.env*
+
+# ==========================================
+# 3. Frontend (Next.js)
+# ==========================================
+frontend/node_modules
+frontend/.pnp
+frontend/.pnp.*
+
+# Yarn Berry
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# testing
+frontend/coverage
+
+# next.js
+frontend/.next/
+frontend/out/
+
+# production
+frontend/build
+
+# vercel
+frontend/.vercel
+
+# typescript
+frontend/*.tsbuildinfo

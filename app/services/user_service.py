@@ -32,6 +32,7 @@ class UserService:
             email=user.email, # type: ignore
             can_teach_skills=can_teach_skills, # type: ignore
             want_to_skills=want_to_skills, # type: ignore
+            description=user.description, # type: ignore
         )
 
     def update_my_profile(

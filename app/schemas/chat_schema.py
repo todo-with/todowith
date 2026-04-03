@@ -50,10 +50,12 @@ class WSSubscribeMessage(BaseModel):
 
 
 class WSSendMessage(BaseModel):
-    type: WSMessageType = WSMessageType.SEND_MESSAGE  # or RECV_MESSAGE (받을 때)
+    type: WSMessageType = WSMessageType.SEND_MESSAGE
     user_id: Optional[UUID] = None
     room_id: UUID
     content: str
+    chat_log_id: Optional[UUID] = None
+    timestamp: Optional[str] = None
 
 
 # 클라이언트에서 매칭 요청을 보낼 때와 서버에서 매칭 요청을 클라이언트에게 전달할 때 모두 사용할 수 있는 메시지 모델
