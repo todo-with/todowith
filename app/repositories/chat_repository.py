@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.models.announcement_models import Announcement
 from app.models.chat_models import ChatLog, Chatroom, JoinChat, MatchingRequest
+from app.models.skill_models import Skill
 from app.models.user_models import User
 
 
@@ -40,6 +41,9 @@ class ChatRepository:
             .subquery()
         )
 
+        can_teach_skill = aliased(Skill)
+        want_to_skill = aliased(Skill)
+
         return (
             db.query(
                 Chatroom.id.label("room_id"),
@@ -52,6 +56,9 @@ class ChatRepository:
                 ).label("updated_at"),
                 Chatroom.announcement_id.label("announcement_id"),
                 Chatroom.matching_id.label("matching_id"),
+                Announcement.user_id.label("announcement_user_id"),
+                can_teach_skill.name.label("can_teach_skill_name"),
+                want_to_skill.name.label("want_to_skill_name"),
             )
             .join(me, me.room_id == Chatroom.id)
             .outerjoin(opponent, opponent.id == opponent_user_id_subquery)
@@ -66,6 +73,9 @@ class ChatRepository:
                     ChatLog.timestamp == latest_message_subquery.c.latest_timestamp,
                 ),
             )
+            .outerjoin(Announcement, Announcement.id == Chatroom.announcement_id)
+            .outerjoin(can_teach_skill, can_teach_skill.id == Announcement.can_teach_skill)
+            .outerjoin(want_to_skill, want_to_skill.id == Announcement.want_to_skill)
             .filter(me.user_id == user_id)
             .order_by(
                 func.coalesce(

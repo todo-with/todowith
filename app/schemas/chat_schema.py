@@ -14,6 +14,8 @@ class ChatRoomInfo(BaseModel):
     updated_at: str
     announcement_id: str
     matching_id: str|None
+    teaching_skill: Optional[str] = None
+    learning_skill: Optional[str] = None
 
 
 

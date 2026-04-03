@@ -54,8 +54,17 @@ class ChatService:
 
     def getChatRooms(self, db: Session, user_id: UUID) -> list[ChatRoomInfo]:
         chatrooms = self.repo.get_my_chatrooms(db, user_id)
-        return [
-            ChatRoomInfo(
+        res = []
+        for room in chatrooms:
+            # If I am the creator of the announcement:
+            # can_teach is my teaching_skill, want_to is my learning_skill
+            # Otherwise, the roles are reversed.
+            is_creator = str(room.announcement_user_id) == str(user_id)
+            
+            teaching_skill = room.can_teach_skill_name if is_creator else room.want_to_skill_name
+            learning_skill = room.want_to_skill_name if is_creator else room.can_teach_skill_name
+            
+            res.append(ChatRoomInfo(
                 room_id=room.room_id,
                 opponent_name=room.opponent_name,
                 name=room.name,
@@ -63,9 +72,10 @@ class ChatService:
                 updated_at=room.updated_at.isoformat(),
                 announcement_id=str(room.announcement_id),
                 matching_id=str(room.matching_id) if room.matching_id is not None else None,
-            )
-            for room in chatrooms
-        ]
+                teaching_skill=teaching_skill,
+                learning_skill=learning_skill
+            ))
+        return res
 
     def create_chat_room(
         self, db: Session, announcement_id: UUID, user_id: UUID, name: str

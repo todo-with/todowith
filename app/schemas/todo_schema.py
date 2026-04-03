@@ -5,6 +5,9 @@ from typing import List
 class CreateToDoCandidateRequest(BaseModel):
     room_id: str
 
+class SelectTodoCandidateRequest(BaseModel):
+    user_id: str | None = None
+
 class CreateToDoRequest(BaseModel):
     matching_id: str
     skill: str

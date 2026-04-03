@@ -46,14 +46,36 @@ export default function MessagesLayout({ children }: { children: React.ReactNode
                         </Avatar>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-bold text-slate-900">{room.opponent_name}</span>
-                          <span className="text-xs text-slate-400">
+                        <div className="flex justify-between items-start mb-1">
+                          <div className="flex flex-col gap-1">
+                            <span className="font-bold text-slate-900 leading-tight">{room.opponent_name}</span>
+                            <div className="flex flex-wrap items-center gap-1 mt-1">
+                              {room.matching_id ? (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-500 text-white border border-green-600 uppercase tracking-tighter">
+                                  매칭 완료
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 text-slate-600 border border-slate-300 uppercase tracking-tighter">
+                                  매칭 대기
+                                </span>
+                              )}
+                              {room.teaching_skill && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
+                                  교습: {room.teaching_skill}
+                                </span>
+                              )}
+                              {room.learning_skill && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-50 text-green-600 border border-green-100 whitespace-nowrap">
+                                  학습: {room.learning_skill}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <span className="text-[10px] text-slate-400 shrink-0">
                             {room.updated_at ? new Date(room.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ""}
                           </span>
                         </div>
-                        <div className="text-xs text-slate-500 mb-1 line-clamp-1">{room.name}</div>
-                        <div className="text-sm truncate text-slate-700">{room.last_message || "메시지가 없습니다"}</div>
+                        <div className="text-sm truncate text-slate-600 font-medium mt-1">{room.last_message || "메시지가 없습니다"}</div>
                       </div>
                     </div>
                   </Link>

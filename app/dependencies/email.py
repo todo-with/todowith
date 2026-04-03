@@ -14,7 +14,7 @@ backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")  # 백엔드 URL
 def send_email(email: str, token: str):
     logger = logging.getLogger(__name__)
     try:
-        with smtplib.SMTP("smtp.gmail.com") as connection:
+        with smtplib.SMTP("smtp.gmail.com", 587) as connection:
             connection.starttls() #Transport Layer Security : 메시지 암호화
             connection.login(user=my_email, password=password)
             connection.sendmail(
