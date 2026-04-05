@@ -11,6 +11,14 @@
   <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white" />
 </p>
 
+# 📌 목차
+* [💡 "돈 대신 재능을, 기록 대신 성장을"](#-돈-대신-재능을-기록-대신-성장을)
+* [🎥 프로젝트 구현 화면 (Demo)](#-프로젝트-구현-화면-demo)
+* [🔥 핵심 기능 (Main Features)](#-핵심-기능-main-features)
+* [🏗️ 시스템 설계 (System Design)](#️-시스템-설계-system-design)
+* [🚀 기술적 도전 (Technical Challenges)](#-기술적-도전-technical-challenges)
+* [👨‍💻 Team TodoWith (Team 8)](#team-section)
+  
 ---
 
 ### 💡 "돈 대신 재능을, 기록 대신 성장을"
@@ -73,7 +81,7 @@
 
 ---
 
-### 👨‍💻 Team TodoWith (Team 8)
+### 👨‍💻 Team TodoWith (Team 8) <a name="team-section"></a>
 
 | <img src="https://github.com/user-attachments/assets/3de2a42f-7abe-407c-9eb1-96519f7d3408" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/25315657-8fd6-4693-92cc-5cd3d9fc7817" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/7f0b5816-6f81-4472-805a-d2464c32fb23" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/00e5a5d2-6a2e-47b3-b5df-fe68181c130e" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/88fe4163-954d-492f-aa38-2cdf21099c5f" width="150" height="200" /> |
 | :---: | :---: | :---: | :---: | :---: |
