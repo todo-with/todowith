@@ -78,7 +78,7 @@
 | <img src="https://github.com/user-attachments/assets/3de2a42f-7abe-407c-9eb1-96519f7d3408" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/25315657-8fd6-4693-92cc-5cd3d9fc7817" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/7f0b5816-6f81-4472-805a-d2464c32fb23" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/00e5a5d2-6a2e-47b3-b5df-fe68181c130e" width="150" height="200" /> | <img src="https://github.com/user-attachments/assets/88fe4163-954d-492f-aa38-2cdf21099c5f" width="150" height="200" /> |
 | :---: | :---: | :---: | :---: | :---: |
 | **정대균** | **안시현** | **한준희** | **신연호** | **김성현** |
-| [@jdk829355](https://github.com/jdk829355) | [@xihxxn](https://github.com/xihxxn) | [@lloufythan0717](https://github.com/lloufythan0717) | [@speter0601](https://github.com/speter0601) | [@kimseoung991](https://github.com/kimseoung991) |
+| [@jdk829355](https://github.com/jdk829355) | [@xihxxn](https://github.com/xihxxn) | [@0armer](https://github.com/0armer) | [@speter0601](https://github.com/speter0601) | [@kimseoung991](https://github.com/kimseoung991) |
 | Backend / Frontend | Backend / Infra | Backend | AI | AI |
 
 ---
